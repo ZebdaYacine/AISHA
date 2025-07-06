@@ -1,0 +1,111 @@
+{
+    "projectId": "6862f19800176e6ded91",
+    "endpoint": "https://nyc.cloud.appwrite.io/v1",
+    "projectName": "aisha",
+    "settings": {
+        "services": {
+            "account": true,
+            "avatars": true,
+            "databases": true,
+            "locale": true,
+            "health": true,
+            "storage": true,
+            "teams": true,
+            "users": true,
+            "sites": true,
+            "functions": true,
+            "graphql": true,
+            "messaging": true
+        },
+        "auth": {
+            "methods": {
+                "jwt": true,
+                "phone": true,
+                "invites": true,
+                "anonymous": true,
+                "email-otp": true,
+                "magic-url": true,
+                "email-password": true
+            },
+            "security": {
+                "duration": 31536000,
+                "limit": 0,
+                "sessionsLimit": 10,
+                "passwordHistory": 0,
+                "passwordDictionary": false,
+                "personalDataCheck": false,
+                "sessionAlerts": false,
+                "mockNumbers": []
+            }
+        }
+    },
+    "databases": [
+        {
+            "$id": "6862f57300295d3e7266",
+            "name": "aisha",
+            "enabled": true
+        }
+    ],
+    "collections": [
+        {
+            "$id": "6862f57d002abe782a81",
+            "$permissions": [
+                "create(\"users\")",
+                "read(\"users\")",
+                "update(\"users\")",
+                "read(\"any\")",
+                "create(\"user:68641d19000683882221\")",
+                "read(\"user:68641d19000683882221\")",
+                "update(\"user:68641d19000683882221\")",
+                "delete(\"user:68641d19000683882221\")"
+            ],
+            "databaseId": "6862f57300295d3e7266",
+            "name": "users",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "email",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 50,
+                    "default": null
+                },
+                {
+                    "key": "password",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 250,
+                    "default": null
+                },
+                {
+                    "key": "role",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 250,
+                    "default": null
+                },
+                {
+                    "key": "firstname",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 250,
+                    "default": null
+                },
+                {
+                    "key": "lastname",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 250,
+                    "default": null
+                }
+            ],
+            "indexes": []
+        }
+    ]
+}
