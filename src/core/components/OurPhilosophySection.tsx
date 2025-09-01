@@ -3,7 +3,7 @@ export default function OurPhilosophySection() {
     <div className="flex w-3/4  justify-center items-center mt-5">
       <div className="card w-11/12 md:flex-row flex-col bg-base-100  rounded-2xl overflow-hidden">
         {/* LEFT: TEXT SECTION */}
-        <div className="md:w-1/2 w-full p-8 flex flex-col justify-center bg-gradient-to-br from-amber-100 via-orange-200 to-yellow-50">
+        <div className="md:w-1/2 w-full p-8 flex flex-col justify-center bg-gradient-to-br from-amber-300 via-orange-500 to-yellow-300">
           <h2 className="text-3xl font-bold mb-4">Our Philosophy</h2>
           <p className=" text-gray-700 leading-relaxed md:text-2xl text-base text-justify">
             At Aicha, we believe in crafting products that blend style, comfort,

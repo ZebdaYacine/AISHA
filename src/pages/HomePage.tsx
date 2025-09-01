@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SlideSection from "../core/components/SlideSection";
 import OurPhilosophySection from "../core/components/OurPhilosophySection";
 import FilterTabs from "../core/components/FilterTabs";
 import ProductCard from "../core/components/ProductCard";
-import { client } from "../core/appwrite/appwriteConfig";
 
 export default function HomePage() {
   const productImages = [
@@ -16,17 +15,6 @@ export default function HomePage() {
     "C3.png",
     "C2.png",
   ];
-
-  useEffect(() => {
-    client
-      .ping()
-      .then(() => {
-        console.log("✅ Appwrite server is reachable.");
-      })
-      .catch((err) => {
-        console.error("❌ Failed to connect to Appwrite server:", err.message);
-      });
-  }, []);
 
   const allProducts = productImages.map((filename, index) => ({
     id: index + 1,

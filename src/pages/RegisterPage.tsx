@@ -4,15 +4,8 @@ import FloatingList from "../core/components/FloatingImageList";
 import { useForm } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useState } from "react";
-import {
-  account,
-  databases,
-  DATABASE_ID,
-  COLLECTION_ID,
-} from "../core/appwrite/appwriteConfig";
-import { ID, Permission, Role } from "appwrite";
-
 import { useAuth } from "../core/hooks/useAuth";
+import GoogleAuthButton from "../core/components/GoogleAuthButton";
 
 type RegisterFormInputs = {
   fname: string;
@@ -38,37 +31,22 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormInputs) => {
     console.log("✅ Register Data:", data);
-    try {
-      // const res = await account.create(
-      //   ID.unique(),
-      //   data.email,
-      //   data.password,
-      //   data.name
-      // );
-      // await account.createEmailPasswordSession(data.email, data.password);
-      const user = await account.get();
-      await databases.createDocument(
-        DATABASE_ID,
-        COLLECTION_ID,
-        ID.unique(),
-        {
-          firstname: data.fname,
-          lastname: data.lname,
-          email: data.email,
-          role: "user",
-        },
-        [
-          Permission.read(Role.user(user.$id)),
-          Permission.write(Role.user(user.$id)),
-        ]
-      );
-      // console.log("✅ Registered user:", res);
-      login();
-      navigate("/");
-    } catch (err: any) {
-      console.error("❌ Appwrite Error:", err);
-      setError("email", { message: err || "Registration failed" });
-    }
+    setError("email", { message: "Email/password registration is not available. Please use Google OAuth." });
+  };
+
+  const handleGoogleSuccess = (user: any) => {
+    console.log("✅ Google Sign-in successful:", user);
+    setError("email", {
+      message:
+        "Email/password registration is not available. Please use Google OAuth.",
+    });
+    login(user);
+    navigate("/profile");
+  };
+
+  const handleGoogleError = (errorMessage: string) => {
+    console.error("❌ Google Sign-in error:", errorMessage);
+    setError("email", { message: errorMessage });
   };
 
   const password = watch("password");
@@ -85,6 +63,23 @@ export default function RegisterPage() {
           </p>
         </div>
         <div className="card w-full max-w-md shadow-2xl bg-base-100 rounded-2xl p-8">
+          {/* Google OAuth Button */}
+          <div className="mb-6">
+            <GoogleAuthButton
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              className="mb-4"
+            />
+            <div className="divider">OR</div>
+          </div>
+
+          {/* Error Display
+          {error && (
+            <div className="alert alert-error mb-4">
+              <span>{error}</span>
+            </div>
+          )} */}
+
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label className="label">
@@ -128,24 +123,27 @@ export default function RegisterPage() {
               <label className="label">
                 <span className="label-text font-semibold">Password</span>
               </label>
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="password"
-                className="input input-bordered w-full"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                })}
-              />
-              <span
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
-              >
-                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
-              </span>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="password"
+                  className="input input-bordered w-full pr-10"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                >
+                  {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.password.message}
@@ -158,26 +156,29 @@ export default function RegisterPage() {
                   Confirm Password
                 </span>
               </label>
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="confirm password"
-                className="input input-bordered w-full"
-                {...register("confirmPassword", {
-                  required: "Please confirm your password",
-                  validate: (value) =>
-                    value === password || "Passwords do not match",
-                })}
-              />
-              <span
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
-              >
-                {showConfirmPassword ? (
-                  <FiEyeOff size={20} />
-                ) : (
-                  <FiEye size={20} />
-                )}
-              </span>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="confirm password"
+                  className="input input-bordered w-full pr-10"
+                  {...register("confirmPassword", {
+                    required: "Please confirm your password",
+                    validate: (value) =>
+                      value === password || "Passwords do not match",
+                  })}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                >
+                  {showConfirmPassword ? (
+                    <FiEyeOff size={20} />
+                  ) : (
+                    <FiEye size={20} />
+                  )}
+                </button>
+              </div>
               {errors.confirmPassword && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.confirmPassword.message}

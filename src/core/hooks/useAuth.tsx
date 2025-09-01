@@ -1,8 +1,13 @@
 import { useContext } from "react";
 import { AuthContext } from "../state/AuthContext";
+import { signOutUser } from "../firebase/auth";
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within AuthProvider");
-  return context;
+
+  return {
+    ...context,
+    signOutUser,
+  };
 }

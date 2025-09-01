@@ -4,7 +4,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
+import ProfilePage from "./pages/ProfilePage";
 import Navbar from "./core/components/Navbar";
+import AuthDebug from "./core/components/AuthDebug";
 
 export default function App() {
   return (
@@ -17,10 +19,12 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Routes>
           </div>
           <div className="divider divide-x-2"></div>
           <Footer />
+          <AuthDebug />
         </div>
       </BrowserRouter>
     </AuthProvider>

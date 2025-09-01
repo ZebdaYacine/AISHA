@@ -52,9 +52,10 @@ export default function Navbar({ cartItemCount }: MainNavbarProps) {
             <li>
               <button
                 className="btn btn-ghost justify-start"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate(isLoggedIn ? "/profile" : "/register")}
               >
-                <FiUser className="w-6 h-6 mr-2" /> Account
+                <FiUser className="w-6 h-6 mr-2" />
+                {isLoggedIn ? "Profile" : "Account"}
               </button>
             </li>
 
@@ -158,7 +159,7 @@ export default function Navbar({ cartItemCount }: MainNavbarProps) {
             )}
             <button
               className="btn btn-ghost"
-              onClick={() => navigate("/register")}
+              onClick={() => navigate(isLoggedIn ? "/profile" : "/register")}
             >
               <FiUser className="w-6 h-6" />
             </button>

@@ -2,8 +2,8 @@
 import { useNavigate } from "react-router-dom";
 import FloatingList from "../core/components/FloatingImageList";
 import { useState } from "react";
-import { account } from "../core/appwrite/appwriteConfig";
 import { useAuth } from "../core/hooks/useAuth";
+import GoogleAuthButton from "../core/components/GoogleAuthButton";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -11,21 +11,22 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("Email/password login is not available. Please use Google OAuth.");
+  };
+
+  const handleGoogleSuccess = (user: any) => {
+    console.log("✅ Google Sign-in successful:", user);
     setError("");
-    setLoading(true);
-    try {
-      await account.createEmailPasswordSession(email, password);
-      login();
-      navigate("/");
-    } catch (err: any) {
-      setError(err?.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
+    login(user);
+    navigate("/profile");
+  };
+
+  const handleGoogleError = (errorMessage: string) => {
+    console.error("❌ Google Sign-in error:", errorMessage);
+    setError(errorMessage);
   };
 
   return (
@@ -48,7 +49,24 @@ export default function LoginPage() {
             <h1 className="text-3xl font-bold">Welcome back!</h1>
           </div>
 
-          {/* Login Form */}
+          {/* Google OAuth Button */}
+          <div className="mb-6">
+            <GoogleAuthButton
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              className="mb-4"
+            />
+            <div className="divider">OR</div>
+          </div>
+
+          {/* Error Display */}
+          {error && (
+            <div className="alert alert-error mb-4">
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Login Form - Disabled */}
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="label">
@@ -58,7 +76,7 @@ export default function LoginPage() {
                 type="email"
                 placeholder="email"
                 className="input input-bordered w-full"
-                required
+                disabled
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -71,27 +89,22 @@ export default function LoginPage() {
                 type="password"
                 placeholder="password"
                 className="input input-bordered w-full"
-                required
+                disabled
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <label className="label">
-                <a href="#" className="label-text-alt link link-hover">
-                  Forgot password?
-                </a>
+                <span className="label-text-alt text-gray-400">
+                  Email/password login is disabled
+                </span>
               </label>
             </div>
-            {error && <div className="text-red-500 text-sm">{error}</div>}
             <button
               className="btn btn-primary w-full mt-4"
               type="submit"
-              disabled={loading}
+              disabled
             >
-              {loading ? (
-                <span className="loading loading-spinner loading-sm"></span>
-              ) : (
-                "Login"
-              )}
+              Login (Disabled)
             </button>
             <div className="text-center mt-2">
               <span>Don't have an account? </span>
