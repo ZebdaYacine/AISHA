@@ -1,8 +1,11 @@
 import { useAuth } from "../core/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ImageDropzone from "../core/components/ImageDropzone";
 
 export default function ProfilePage() {
+  const [userType, setUserType] = useState("client");
+  const [productImage, setProductImage] = useState<File | null>(null);
   const { user, isLoggedIn, loading, logout, signOutUser } = useAuth();
   const navigate = useNavigate();
 
@@ -29,6 +32,17 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Logout error:", error);
     }
+  };
+
+  const handleProductImageDrop = (file: File) => {
+    setProductImage(file);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("User Type:", userType);
+    console.log("Product Image:", productImage);
+    // Here you would typically handle the upload and update logic
   };
 
   if (loading) {
@@ -60,20 +74,46 @@ export default function ProfilePage() {
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">User Profile</h1>
 
-        <div className="space-y-6">
-          {/* Profile Picture */}
-          {user.photoURL && (
-            <div className="flex items-center space-x-4">
-              <img
-                src={user.photoURL}
-                alt="Profile"
-                className="w-20 h-20 rounded-full"
-              />
-              <div>
-                <h2 className="text-xl font-semibold">Profile Picture</h2>
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          {/* Profile Picture and Product Image Upload */}
+          <div className="flex flex-col items-center space-y-6 rounded-lg bg-base-200 p-6">
+            <div className="flex w-full items-center justify-around">
+              {/* Profile Picture */}
+              <div className="flex flex-col items-center">
+                <h2 className="text-2xl font-bold mb-4">Profile Picture</h2>
+                <div className="avatar">
+                  <div className="w-32 rounded-full ring-2 ring-primary ring-offset-2 ring-offset-base-100">
+                    <img
+                      src={
+                        user.photoURL ||
+                        "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+                      }
+                      alt="Profile"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Product Image and User Type */}
+              <div className="flex flex-col items-center space-y-4">
+                <div className="flex flex-col items-center">
+                  <h2 className="text-2xl font-bold mb-4">Product Image</h2>
+                  <ImageDropzone onImageDrop={handleProductImageDrop} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">User Type</h2>
+                  <select
+                    value={userType}
+                    onChange={(e) => setUserType(e.target.value)}
+                    className="select select-bordered w-full max-w-xs"
+                  >
+                    <option value="client">Client</option>
+                    <option value="saller">Seller</option>
+                  </select>
+                </div>
               </div>
             </div>
-          )}
+          </div>
 
           {/* User Information */}
           <div className="space-y-4">
@@ -156,14 +196,25 @@ export default function ProfilePage() {
 
           {/* Actions */}
           <div className="pt-6 border-t flex gap-4">
-            <button className="btn btn-outline" onClick={() => navigate("/")}>
+            <button type="submit" className="btn btn-primary">
+              Save Changes
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => navigate("/")}
+            >
               Back to Home
             </button>
-            <button className="btn btn-error" onClick={handleLogout}>
+            <button
+              type="button"
+              className="btn btn-error"
+              onClick={handleLogout}
+            >
               Logout
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

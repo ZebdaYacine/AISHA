@@ -17,6 +17,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Listen for auth state changes
     const unsubscribe = onAuthStateChange((user) => {
       setUser(user);
+      setIsLoggedIn(!!user);
       setLoading(false);
     });
 
@@ -39,14 +41,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (user: User) => {
     console.log("🔐 AuthContext: Login called with user:", user);
     setUser(user);
+    setIsLoggedIn(true);
   };
 
   const logout = () => {
     console.log("🔐 AuthContext: Logout called");
     setUser(null);
+    setIsLoggedIn(false);
   };
-
-  const isLoggedIn = !!user;
 
   console.log("🔐 AuthContext: Current state:", { user, isLoggedIn, loading });
 

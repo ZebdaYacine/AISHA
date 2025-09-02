@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithGoogle } from "../firebase/auth";
 
 interface GoogleAuthButtonProps {
-  onSuccess?: (user: unknown) => void;
+  onSuccess?: (user: any) => void;
   onError?: (error: string) => void;
   className?: string;
   children?: React.ReactNode;
+  isLoginPage?: boolean;
 }
 
 export default function GoogleAuthButton({
@@ -14,6 +16,7 @@ export default function GoogleAuthButton({
   onError,
   className = "",
   children = "Continue with Google",
+  isLoginPage = false,
 }: GoogleAuthButtonProps) {
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +40,7 @@ export default function GoogleAuthButton({
         console.warn("⚠️ GoogleAuthButton: No user and no error returned");
         onError?.("Unexpected result from Google sign-in");
       }
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error("❌ GoogleAuthButton: Exception occurred:", error);
       onError?.(error.message || "Failed to sign in with Google");
     } finally {
@@ -49,14 +52,15 @@ export default function GoogleAuthButton({
     <button
       onClick={handleGoogleSignIn}
       disabled={loading}
-      className={`btn btn-outline w-full gap-2 hover:bg-gray-50 ${className}`}
+      className={`btn btn-lg w-full gap-3 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${className}`}
     >
       {loading ? (
-        <span className="loading loading-spinner loading-sm"></span>
+        <span className="loading loading-spinner loading-md"></span>
       ) : (
-        <FcGoogle className="text-xl" />
+        <FcGoogle className="text-2xl" />
       )}
       {children}
+      {/* {isLoginPage ? "login with google account" : children} */}
     </button>
   );
 }

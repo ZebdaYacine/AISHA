@@ -4,18 +4,12 @@ import FloatingList from "../core/components/FloatingImageList";
 import { useState } from "react";
 import { useAuth } from "../core/hooks/useAuth";
 import GoogleAuthButton from "../core/components/GoogleAuthButton";
+import { FaUserCheck, FaArrowRight } from "react-icons/fa";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("Email/password login is not available. Please use Google OAuth.");
-  };
 
   const handleGoogleSuccess = (user: any) => {
     console.log("✅ Google Sign-in successful:", user);
@@ -30,97 +24,70 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-base-200 to-base-100 relative">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-base-200 to-base-100 relative overflow-hidden">
       <FloatingList />
 
-      <div className="flex-1 flex items-center justify-center relative z-10 ">
-        <div className="card w-full max-w-md shadow-2xl bg-base-100 rounded-2xl p-8">
-          {/* Avatar logo centered */}
-          <div className="flex justify-center ">
-            <div className="avatar">
-              <div className="w-25 rounded-full  ">
-                <img src="/public/aisha/logo.png" alt="Aicha Logo" />
-              </div>
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative z-20 flex justify-center px-4 pt-32 pb-20">
+        {/* Hero Section */}
+
+        {/* Main Card */}
+        <div className="card w-full max-w-lg shadow-2xl bg-base-100/95 backdrop-blur-sm border border-base-300/50 rounded-3xl p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 bg-gradient-to-br from-secondary to-primary rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <FaUserCheck className="text-3xl text-white" />
             </div>
-          </div>
-
-          {/* Text */}
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold">Welcome back!</h1>
-          </div>
-
-          {/* Google OAuth Button */}
-          <div className="mb-6">
-            <GoogleAuthButton
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              className="mb-4"
-            />
-            <div className="divider">OR</div>
+            <h2 className="text-3xl font-bold mb-2">Sign In to Aicha</h2>
+            <p className="text-base-content/70">
+              Access your artisan dashboard
+            </p>
           </div>
 
           {/* Error Display */}
           {error && (
-            <div className="alert alert-error mb-4">
+            <div className="alert alert-error mb-6 shadow-lg">
               <span>{error}</span>
             </div>
           )}
 
-          {/* Login Form - Disabled */}
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Email</span>
-              </label>
-              <input
-                type="email"
-                placeholder="email"
-                className="input input-bordered w-full"
-                disabled
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+          {/* Google OAuth Button */}
+          <div className="mb-8">
+            <GoogleAuthButton
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              className="mb-6"
+              isLoginPage={true}
+            />
+
+            <div className="text-center">
+              <p className="text-sm text-base-content/60 mb-4">
+                Your account is protected by Google's security standards
+              </p>
             </div>
-            <div>
-              <label className="label">
-                <span className="label-text font-semibold">Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="password"
-                className="input input-bordered w-full"
-                disabled
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <label className="label">
-                <span className="label-text-alt text-gray-400">
-                  Email/password login is disabled
-                </span>
-              </label>
-            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="divider">New to Aicha?</div>
+
+          {/* Register Link */}
+          <div className="text-center">
             <button
-              className="btn btn-primary w-full mt-4"
-              type="submit"
-              disabled
+              className="btn btn-outline btn-lg w-full group"
+              onClick={() => navigate("/register")}
             >
-              Login (Disabled)
+              Create Account
+              <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
-            <div className="text-center mt-2">
-              <span>Don't have an account? </span>
-              <button
-                className="btn btn-link"
-                type="button"
-                onClick={() => navigate("/register")}
-              >
-                Register
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
-
-      <div className="divider"></div>
     </div>
   );
 }

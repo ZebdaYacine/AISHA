@@ -1,5 +1,5 @@
 import { MdOutlineFavoriteBorder, MdOutlineShoppingCart } from "react-icons/md";
-import { FiUser } from "react-icons/fi";
+import { FiUser, FiHome } from "react-icons/fi";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import ThemeToggle from "./ThemeToggle";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -12,10 +12,10 @@ interface MainNavbarProps {
 
 export default function Navbar({ cartItemCount }: MainNavbarProps) {
   const { isLoggedIn } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  // const hideDropdown =
-  //   location.pathname === "/login" || location.pathname === "/register";
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
   const isHome = location.pathname === "/";
 
   const craftItems = [
@@ -31,6 +31,9 @@ export default function Navbar({ cartItemCount }: MainNavbarProps) {
     <>
       {/* 📱 Mobile Drawer */}
       <div className="drawer drawer-end lg:hidden z-50">
+        {isLoggedIn && (
+          <div className="drawer-overlay">{user?.displayName}</div>
+        )}
         <input id="mobile-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex justify-between items-center px-4 py-2 w-full bg-base-100 shadow-md">
           <div className="flex-1 text-center font-canela text-2xl font-bold">
@@ -54,8 +57,18 @@ export default function Navbar({ cartItemCount }: MainNavbarProps) {
                 className="btn btn-ghost justify-start"
                 onClick={() => navigate(isLoggedIn ? "/profile" : "/register")}
               >
-                <FiUser className="w-6 h-6 mr-2" />
-                {isLoggedIn ? "Profile" : "Account"}
+                {isAuthPage ? (
+                  <FiHome className="w-6 h-6 mr-2" />
+                ) : isLoggedIn && user?.photoURL ? (
+                  <img 
+                    src={user.photoURL} 
+                    alt="Profile" 
+                    className="w-6 h-6 rounded-full mr-2 object-cover"
+                  />
+                ) : (
+                  <FiUser className="w-6 h-6 mr-2" />
+                )}
+                {isLoggedIn ? user?.displayName : "Guest"}
               </button>
             </li>
 
@@ -161,7 +174,15 @@ export default function Navbar({ cartItemCount }: MainNavbarProps) {
               className="btn btn-ghost"
               onClick={() => navigate(isLoggedIn ? "/profile" : "/register")}
             >
-              <FiUser className="w-6 h-6" />
+              {isLoggedIn && user?.photoURL ? (
+                <img 
+                  src={user.photoURL} 
+                  alt="Profile" 
+                  className="w-6 h-6 rounded-full object-cover"
+                />
+              ) : (
+                <FiUser className="w-6 h-6" />
+              )}
             </button>
             <ThemeToggle />
           </div>
