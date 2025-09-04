@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import ImageDropzone from "../core/components/ImageDropzone";
 import InputWithIcon from "../core/components/InputWithIcon";
 import { FaUser, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import { db } from "../core/firebase/config";
+import { ref, set } from "firebase/database";
 
 export default function ProfilePage() {
   const [userType, setUserType] = useState("client");
@@ -48,12 +50,24 @@ export default function ProfilePage() {
     setCraftsmanInfo({ ...craftsmanInfo, proof: file });
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("User Info:", userInfo);
-    console.log("User Type:", userType);
-    if (isCraftsman) {
-      console.log("Craftsman Info:", craftsmanInfo);
+    if (!user) return;
+
+    const userData = {
+      ...userInfo,
+      userType,
+      photoURL: user.photoURL,
+      isCraftsman:isCraftsman,
+      ...(isCraftsman && { craftsmanInfo }),
+    };
+
+    try {
+      await set(ref(db, "users/" + user.uid), userData);
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile: ", error);
+      alert("Failed to update profile.");
     }
   };
 
