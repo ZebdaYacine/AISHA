@@ -60,9 +60,9 @@ export default function Navbar({ cartItemCount }: MainNavbarProps) {
                 {isAuthPage ? (
                   <FiHome className="w-6 h-6 mr-2" />
                 ) : isLoggedIn && user?.photoURL ? (
-                  <img 
-                    src={user.photoURL} 
-                    alt="Profile" 
+                  <img
+                    src={user.photoURL}
+                    alt="Profile"
                     className="w-6 h-6 rounded-full mr-2 object-cover"
                   />
                 ) : (
@@ -175,9 +175,9 @@ export default function Navbar({ cartItemCount }: MainNavbarProps) {
               onClick={() => navigate(isLoggedIn ? "/profile" : "/register")}
             >
               {isLoggedIn && user?.photoURL ? (
-                <img 
-                  src={user.photoURL} 
-                  alt="Profile" 
+                <img
+                  src={user.photoURL}
+                  alt="Profile"
                   className="w-6 h-6 rounded-full object-cover"
                 />
               ) : (
