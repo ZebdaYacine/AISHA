@@ -32,7 +32,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
   return (
     <div
       {...getRootProps()}
-      className={`relative w-full p-6 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors duration-300 ${
+      className={`relative w-full bg-slate-200 p-6 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors duration-300 ${
         isDragActive
           ? "border-primary bg-primary-focus"
           : "border-base-300 hover:border-primary"
@@ -40,16 +40,16 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
     >
       <input {...getInputProps()} />
       {preview ? (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center ">
           <img
             src={preview}
             alt="Profile Preview"
-            className="w-24 h-24 object-cover rounded-full mb-4"
+            className="w-24 h-24 object-cover rounded-full mb-4 "
           />
           <p className="text-sm">Drag 'n' drop to replace, or click</p>
         </div>
       ) : (
-        <div className="text-base-content/70">
+        <div className="text-base-content/70 font-bold">
           {isDragActive ? (
             <p>Drop the image here...</p>
           ) : (

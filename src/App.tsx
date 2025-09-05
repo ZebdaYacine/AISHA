@@ -1,11 +1,11 @@
 import Footer from "./core/components/Footer";
 import { AuthProvider } from "./core/state/AuthContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
-import ProfilePage from "./pages/ProfilePage";
+import RegisterPage from "./feature/RegisterPage";
+import LoginPage from "./feature/LoginPage";
+import HomePage from "./feature/HomePage";
 import Navbar from "./core/components/Navbar";
+import ProfilePage from "./feature/profile/view/pages/ProfilePage";
 
 export default function App() {
   return (
