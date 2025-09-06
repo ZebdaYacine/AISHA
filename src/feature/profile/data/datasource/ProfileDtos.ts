@@ -1,14 +1,17 @@
-export interface UserInfo {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  address: string;
-  role: string;
-  type: string;
+export interface ProfileInfo {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  address?: string;
+  role?: string;
+  type?: string;
+  createdAt?: string;
 }
 
 export interface CraftsmanInfo {
-  craftType: string;
-  storeAddress: string;
-  proof: File | null;
+  userId?: string;
+  craftType?: string;
+  storeAddress?: string;
+  proof?: File | null;
+  status?: "pending" | "rejected" | "accepted" | null;
 }

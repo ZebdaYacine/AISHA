@@ -1,41 +1,50 @@
 import { FaMapMarkerAlt } from "react-icons/fa";
 import InputWithIcon from "../../../../core/components/InputWithIcon";
 import ImageDropzone from "../../../../core/components/ImageDropzone";
+import { useCraftsContext } from "../../../../core/hooks/useProfile";
+import { useState } from "react";
 
-interface CraftsmanInfo {
-  craftType: string;
-  storeAddress: string;
-  proof: File | null;
-}
+export default function ProofOfCraftsComponent() {
+  const { craftsmanInfo, setCraftsmanInfo } = useCraftsContext();
 
-interface Props {
-  isCraftsman: boolean;
-  setIsCraftsman: (val: boolean) => void;
-  craftsmanInfo: CraftsmanInfo;
-  setCraftsmanInfo: (info: CraftsmanInfo) => void;
-  handleCraftsmanProofDrop: (file: File) => void;
-}
+  const [showCraftsmanForm, setShowCraftsmanForm] = useState<boolean>(false);
 
-export default function ProofOfCraftsComponent({
-  isCraftsman,
-  setIsCraftsman,
-  craftsmanInfo,
-  setCraftsmanInfo,
-  handleCraftsmanProofDrop,
-}: Props) {
+  const handleCraftsmanProofDrop = (file: File) => {
+    setCraftsmanInfo({
+      ...craftsmanInfo,
+      proof: file,
+    });
+  };
+
+  const handleStoreAdress = (adress: string) => {
+    setCraftsmanInfo({
+      ...craftsmanInfo,
+      storeAddress: adress,
+    });
+  };
+
+  const handleCarftType = (craftType: string) => {
+    setCraftsmanInfo({
+      ...craftsmanInfo,
+      craftType: craftType,
+    });
+  };
+
   return (
     <div className="p-6 shadow-inner">
       <div className="text-center">
         <button
           type="button"
           className="btn btn-lg btn-primary transform hover:scale-105 transition-transform duration-300"
-          onClick={() => setIsCraftsman(!isCraftsman)}
+          onClick={() => {
+            setShowCraftsmanForm(!showCraftsmanForm);
+          }}
         >
-          {isCraftsman ? "Close Craftsman Details" : "Become a Craftsman"}
+          {showCraftsmanForm ? "Close Craftsman Details" : "Become a Craftsman"}
         </button>
       </div>
 
-      {isCraftsman && (
+      {showCraftsmanForm && (
         <div className="mt-6 space-y-6">
           <div className="form-control">
             <label className="label">
@@ -43,13 +52,10 @@ export default function ProofOfCraftsComponent({
             </label>
             <select
               className="select select-bordered w-full"
-              value={craftsmanInfo.craftType}
-              onChange={(e) =>
-                setCraftsmanInfo({
-                  ...craftsmanInfo,
-                  craftType: e.target.value,
-                })
-              }
+              value={craftsmanInfo?.craftType}
+              onChange={(e) => {
+                handleCarftType(e.target.value);
+              }}
             >
               <option disabled value="">
                 Select your craft
@@ -68,13 +74,8 @@ export default function ProofOfCraftsComponent({
             <InputWithIcon
               Icon={FaMapMarkerAlt}
               placeholder="Your store or workshop address"
-              value={craftsmanInfo.storeAddress}
-              onChange={(e) =>
-                setCraftsmanInfo({
-                  ...craftsmanInfo,
-                  storeAddress: e.target.value,
-                })
-              }
+              value={craftsmanInfo?.storeAddress}
+              onChange={(e) => handleStoreAdress(e.target.value)}
             />
           </div>
           <div className="form-control">

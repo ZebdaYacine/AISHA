@@ -1,15 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-
-// import UserTypeComponent from "../components/UserTypeComponent";
+import swal from "sweetalert";
 import UserInformationComponent from "../components/UserInformationComponent";
 import ProofOfCraftsComponent from "../components/ProofOfCraftsComponent";
 
 import { useProfileViewModel } from "../../viewmodel/ProfileViewModel";
+import CustomAlert from "../components/CustomAlert";
+import { useCraftsContext } from "../../../../core/hooks/useProfile";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const vm = useProfileViewModel();
+  const { craftsmanInfo } = useCraftsContext();
 
   useEffect(() => {
     if (!vm.loading && !vm.isLoggedIn) {
@@ -19,9 +21,14 @@ export default function ProfilePage() {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const result = await vm.saveProfile();
-    alert(result.message);
-    navigate("/");
+    swal(
+      result.success ? "🎉 Success!" : "",
+      result.message,
+      result.success ? "success" : "error"
+    );
+    // navigate("/");
   };
 
   if (vm.loading) {
@@ -80,19 +87,27 @@ export default function ProfilePage() {
           </div>
 
           {/* User Info */}
-          <UserInformationComponent
-            userInfo={vm.userInfo}
-            setUserInfo={vm.setUserInfo}
-          />
+          <UserInformationComponent />
+          {/* <ProofOfCraftsComponent /> */}
 
           {/* Craftsman Section */}
-          {!vm.isCraftsman ? (
-            <ProofOfCraftsComponent
-              isCraftsman={vm.isCraftsman}
-              setIsCraftsman={vm.setIsCraftsman}
-              craftsmanInfo={vm.craftsmanInfo}
-              setCraftsmanInfo={vm.setCraftsmanInfo}
-              handleCraftsmanProofDrop={vm.handleCraftsmanProofDrop}
+          {!craftsmanInfo?.status ? (
+            <ProofOfCraftsComponent />
+          ) : craftsmanInfo?.status === "pending" ||
+            craftsmanInfo?.status === undefined ? (
+            <CustomAlert
+              type="pending"
+              message="⏳ Your request to become a craftsman is pending."
+            />
+          ) : craftsmanInfo?.status === "accepted" ? (
+            <CustomAlert
+              type="accepted"
+              message="🎉 Your request has been accepted! Welcome aboard."
+            />
+          ) : craftsmanInfo?.status === "rejected" ? (
+            <CustomAlert
+              type="rejected"
+              message="❌ Sorry, your request was rejected."
             />
           ) : null}
 
