@@ -1,10 +1,11 @@
 import { FiUser, FiHome } from "react-icons/fi";
-import { ShoppingBasket } from "lucide-react";
 import { CiSearch } from "react-icons/ci";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useCraftsContext } from "../../hooks/useProfile";
-import { IoStorefrontOutline } from "react-icons/io5";
+
+import { HiOutlineShoppingCart } from "react-icons/hi";
+import { HiOutlineBuildingStorefront } from "react-icons/hi2";
 
 interface DesktopNavbarProps {
   cartItemCount: number;
@@ -29,33 +30,51 @@ export default function DesktopNavbar({
         <div className="flex flex-row w-full items-center">
           <div className="flex gap-2 items-center">
             {isAuthPage ? (
-              <FiHome className="w-10 h-10 mr-2 cursor-pointer" />
+              <div className="w-10 h-10 flex items-center justify-center">
+                <FiHome className="w-8 h-8 cursor-pointer" />
+              </div>
             ) : isLoggedIn && user?.photoURL ? (
-              <img
-                src={user.photoURL}
-                alt="Profile"
-                className="w-10 h-10 rounded-full mr-2 object-cover cursor-pointer"
-                onClick={() => navigate("/profile")}
-              />
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img
+                  src={user.photoURL}
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                  onClick={() => navigate("/profile")}
+                />
+              </div>
             ) : (
-              <FiUser
-                className="w-10 h-10 mr-2 cursor-pointer"
-                onClick={() => navigate(isLoggedIn ? "/profile" : "/register")}
-              />
+              <div className="w-10 h-10 flex items-center justify-center">
+                <FiUser
+                  className="w-8 h-8 cursor-pointer"
+                  onClick={() =>
+                    navigate(isLoggedIn ? "/profile" : "/register")
+                  }
+                />
+              </div>
             )}
+
             <div className="indicator">
               <span className="indicator-item indicator-center badge badge-secondary h-4 w-4">
                 {cartItemCount}
               </span>
-              <ShoppingBasket
-                className="w-10 h-10 mr-2 cursor-pointer"
-                onClick={() => navigate("/cart")}
-              />
+              <div className="w-10 h-10 flex items-center justify-center">
+                <HiOutlineShoppingCart
+                  className="w-8 h-8 cursor-pointer"
+                  onClick={() => navigate("/cart")}
+                />
+              </div>
             </div>
+
             {craftsmanInfo?.status === "accepted" && (
-              <IoStorefrontOutline className="w-10 h-10 mr-2 cursor-pointer animate-pulse " />
+              <div className="w-10 h-10 flex items-center justify-center">
+                <HiOutlineBuildingStorefront
+                  onClick={() => navigate("/my-store")}
+                  className="w-8 h-8 cursor-pointer animate-pulse"
+                />
+              </div>
             )}
           </div>
+
           <div className="px-2 w-full ml-3 mr-3">
             <label className="input rounded-2xl w-full">
               <CiSearch className="text-2xl" />
@@ -78,7 +97,7 @@ export default function DesktopNavbar({
 
       {/* Crafts menu */}
       <div className="flex w-full justify-center mt-4">
-        <ul className="flex gap-6 text-lg font-bold font-inter font-medium text-gray-700 w-3/4 justify-center">
+        <ul className="flex gap-6 text-lg  font-inter font-medium text-gray-700 w-3/4 justify-center">
           {craftItems.map((item) => (
             <li
               key={item.label}

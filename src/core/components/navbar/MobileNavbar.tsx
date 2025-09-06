@@ -28,8 +28,8 @@ export default function MobileNavbar({
   return (
     <div className="drawer drawer-end lg:hidden z-50">
       <input id="mobile-drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex justify-between items-center p-4 w-full bg-base-100 shadow-md">
-        <div className="flex flex-col w-full ">
+      <div className="drawer-content fixed flex justify-between items-center p-4 w-full bg-base-100 shadow-md">
+        <div className="flex  flex-col w-full ">
           {/* Top Row */}
           <div className="flex flex-row justify-between items-center">
             <div className="flex gap-2 items-center">
@@ -61,20 +61,28 @@ export default function MobileNavbar({
                 />
               </div>
               {craftsmanInfo?.status === "accepted" && (
-                <IoStorefrontOutline className=" w-6 h-6 mr-2 cursor-pointer animate-pulse " />
+                <IoStorefrontOutline
+                  onClick={() => navigate("/my-store")}
+                  className=" w-6 h-6 mr-2 cursor-pointer animate-pulse "
+                />
               )}
             </div>
 
-            <button
-              onClick={() => navigate("/")}
-              className="text-right font-canela text-2xl font-bold"
-            >
-              Aicha
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate("/")}
+                className="text-right font-canela text-2xl font-bold"
+              >
+                Aicha
+              </button>
 
-            <label htmlFor="mobile-drawer" className="btn btn-ghost btn-circle">
-              <HiOutlineMenuAlt3 className="w-6 h-6" />
-            </label>
+              <label
+                htmlFor="mobile-drawer"
+                className="btn btn-ghost btn-circle"
+              >
+                <HiOutlineMenuAlt3 className="w-6 h-6" />
+              </label>
+            </div>
           </div>
 
           {/* Search Bar */}
@@ -95,7 +103,10 @@ export default function MobileNavbar({
             <>
               {craftsmanInfo?.status === "accepted" && (
                 <li className="animate-pulse">
-                  <button className="btn btn-ghost justify-start">
+                  <button
+                    onClick={() => navigate("/my-store")}
+                    className="btn btn-ghost justify-start"
+                  >
                     <IoStorefrontOutline className="w-6 h-6 mr-2" />
                     My Store
                   </button>

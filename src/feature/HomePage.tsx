@@ -35,7 +35,7 @@ export default function HomePage() {
   return (
     <>
       {/* MAIN CONTENT */}
-      <div className="flex flex-col flex-1 justify-center items-center w-full h-screen">
+      <div className="sm:mt-32 mt-28 flex  flex-col flex-1 justify-center items-center w-full h-screen">
         {/* 1/3 - Video Section */}
         <div className="h-1/3 w-full">
           <video
