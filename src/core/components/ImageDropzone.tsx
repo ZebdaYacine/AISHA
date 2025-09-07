@@ -44,7 +44,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
           <img
             src={preview}
             alt="Profile Preview"
-            className="w-24 h-24 object-cover rounded-full mb-4 "
+            className="w-full h-full object-cover  mb-4  rounded-lg"
           />
           <p className="text-sm">Drag 'n' drop to replace, or click</p>
         </div>

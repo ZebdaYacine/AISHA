@@ -41,7 +41,7 @@ export default function ProfilePage() {
 
   if (!vm.user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="mt-28 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Not authenticated</h1>
           <button
@@ -56,7 +56,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className=" mt-16 p-4 sm:p-8">
       <div className="max-w-4xl mx-auto shadow-xl mt-10 rounded-xl p-6 sm:p-10">
         <form onSubmit={handleFormSubmit} className="space-y-8">
           {/* Profile Picture + Account Type */}

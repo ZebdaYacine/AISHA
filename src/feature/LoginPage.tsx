@@ -24,7 +24,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-base-200 to-base-100 relative overflow-hidden">
+    <div className="mt-16 min-h-screen flex flex-col bg-gradient-to-br from-base-200 to-base-100 relative overflow-hidden">
       <FloatingList />
 
       {/* Background decorative elements */}
