@@ -1,97 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import ProductCard from "../../../../core/components/ProductCard";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useProfileContext } from "../../../../core/state/profileContext";
-import { useAuth } from "../../../../core/hooks/useAuth";
 import ModalAddProduct from "../components/ModalAddProduct";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
-import {
-  ref as databaseRef,
-  set,
-  push,
-  onValue,
-} from "firebase/database";
-import { db } from "../../../../core/firebase/config";
+import { useStoreViewModel } from "../../viewmodel/useStoreViewModel";
 
-const StorePage: React.FC = () => {
-  const [products, setProducts] = useState<
-    { id: string; title: string; description: string; image: string }[]
-  >([]);
+const StorePage: React.FC = observer(() => {
   const [currentPage, setCurrentPage] = useState(1);
   const { profileInfo } = useProfileContext();
-  const { user } = useAuth();
-
-  useEffect(() => {
-    const productsDbRef = databaseRef(db, "products");
-    const unsubscribe = onValue(productsDbRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const productsList = Object.keys(data).map((key) => ({
-          id: key,
-          ...data[key],
-        }));
-        setProducts(productsList);
-      } else {
-        setProducts([]);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const viewModel = useStoreViewModel();
 
   const capitalize = (str?: string) =>
     str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
 
   const firstName = capitalize(profileInfo?.firstName);
 
-  const handleSaveProduct = async (product: {
-    title: string;
-    description: string;
-    image: File | null;
-  }) => {
-    if (!user) {
-      alert("You must be logged in to add a product.");
-      return;
-    }
-
-    let imageUrl = "/public/aisha/placeholder.jpg";
-    if (product.image) {
-      const storage = getStorage();
-      const imageRef = ref(
-        storage,
-        `products/${user.uid}/${product.image.name}`
-      );
-      await uploadBytes(imageRef, product.image);
-      imageUrl = await getDownloadURL(imageRef);
-    }
-
-    const newProductData = {
-      title: product.title,
-      description: product.description,
-      image: imageUrl,
-      userId: user.uid,
-    };
-
-    try {
-      const productsDbRef = databaseRef(db, "products");
-      const newProductRef = push(productsDbRef);
-      await set(newProductRef, newProductData);
-      (document.getElementById("my_modal") as HTMLDialogElement).close();
-    } catch (error) {
-      console.error("Error adding product: ", error);
-      alert("Failed to add product. Please try again.");
-    }
-  };
-
   const ITEMS_PER_PAGE = 16;
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(viewModel.products.length / ITEMS_PER_PAGE);
 
-  const paginatedProducts = products.slice(
+  const paginatedProducts = viewModel.products.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -124,19 +52,27 @@ const StorePage: React.FC = () => {
       </div>
 
       {/* ✅ Product Grid */}
-      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {paginatedProducts.map((product) => (
-          <ProductCard
-            key={product.id}
-            id={product.id}
-            image={product.image}
-            title={product.title}
-            description={product.description}
-            onBuy={() => console.log(`Buy ${product.title}`)}
-            isClient={false}
-          />
-        ))}
-      </div>
+      {viewModel.isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      ) : viewModel.error ? (
+        <div className="text-center text-red-500">{viewModel.error}</div>
+      ) : (
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {paginatedProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              id={product.id}
+              image={product.image}
+              title={product.title}
+              description={product.description}
+              onBuy={() => console.log(`Buy ${product.title}`)}
+              isClient={false}
+            />
+          ))}
+        </div>
+      )}
 
       {/* ✅ Pagination */}
       <div className="flex justify-center mt-8 gap-2 flex-wrap">
@@ -170,12 +106,12 @@ const StorePage: React.FC = () => {
         <ModalAddProduct
           id="my_modal"
           title="Add New Product"
+          viewModel={viewModel}
           onClose={() => console.log("Modal closed")}
-          onSave={handleSaveProduct}
         />
       </div>
     </div>
   );
-};
+});
 
 export default StorePage;
