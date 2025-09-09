@@ -19,6 +19,8 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
 }) => {
   const [productTitle, setProductTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [price, setPrice] = useState<number | "">("");
+  const [stock, setStock] = useState<number | "">("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const { user } = useAuth();
 
@@ -35,9 +37,23 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
       alert("Please select an image for the product.");
       return;
     }
+    if (price === "" || price <= 0) {
+      alert("Please enter a valid price for the product.");
+      return;
+    }
+    if (stock === "" || stock < 0) {
+      alert("Please enter a valid stock quantity.");
+      return;
+    }
 
     viewModel.addProduct(
-      { title: productTitle, description, image: imageFile },
+      {
+        title: productTitle,
+        description,
+        image: imageFile,
+        price: price,
+        stock: stock,
+      },
       user.uid
     );
 
@@ -46,6 +62,8 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
     // Reset form
     setProductTitle("");
     setDescription("");
+    setPrice("");
+    setStock("");
     setImageFile(null);
   };
 
@@ -64,6 +82,33 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
               className="input input-bordered w-full"
               value={productTitle}
               onChange={(e) => setProductTitle(e.target.value)}
+            />
+          </div>
+          {/* Price */}
+          <div className="form-control">
+            <label className="label font-medium">Price</label>
+            <input
+              type="number"
+              placeholder="99.99"
+              className="input input-bordered w-full"
+              value={price}
+              onChange={(e) =>
+                setPrice(e.target.value === "" ? "" : parseFloat(e.target.value))
+              }
+            />
+          </div>
+
+          {/* Stock */}
+          <div className="form-control">
+            <label className="label font-medium">Stock</label>
+            <input
+              type="number"
+              placeholder="10"
+              className="input input-bordered w-full"
+              value={stock}
+              onChange={(e) =>
+                setStock(e.target.value === "" ? "" : parseInt(e.target.value, 10))
+              }
             />
           </div>
 

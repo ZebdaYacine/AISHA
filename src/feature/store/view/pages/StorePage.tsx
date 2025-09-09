@@ -4,10 +4,14 @@ import ProductCard from "../../../../core/components/ProductCard";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useProfileContext } from "../../../../core/state/profileContext";
 import ModalAddProduct from "../components/ModalAddProduct";
+import ModalUpdateProduct from "../components/ModalUpdateProduct";
 import { useStoreViewModel } from "../../viewmodel/useStoreViewModel";
+import type { Product } from "../../viewmodel/StoreViewModel";
 
 const StorePage: React.FC = observer(() => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [toggelMore, setToggelMore] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { profileInfo } = useProfileContext();
   const viewModel = useStoreViewModel();
 
@@ -23,6 +27,11 @@ const StorePage: React.FC = observer(() => {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+
+  const handleEdit = (product: Product) => {
+    setSelectedProduct(product);
+    (document.getElementById("update_modal") as HTMLDialogElement).showModal();
+  };
 
   return (
     <div className="mt-32 container mx-auto p-4">
@@ -67,8 +76,15 @@ const StorePage: React.FC = observer(() => {
               image={product.image}
               title={product.title}
               description={product.description}
+              price={product.price}
+              stock={product.stock}
+              toggelMore={toggelMore}
               onBuy={() => console.log(`Buy ${product.title}`)}
+              onEdit={() => handleEdit(product)}
               isClient={false}
+              onMore={() => {
+                setToggelMore(!toggelMore);
+              }}
             />
           ))}
         </div>
@@ -108,6 +124,13 @@ const StorePage: React.FC = observer(() => {
           title="Add New Product"
           viewModel={viewModel}
           onClose={() => console.log("Modal closed")}
+        />
+        <ModalUpdateProduct
+          id="update_modal"
+          title="Update Product"
+          viewModel={viewModel}
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
         />
       </div>
     </div>

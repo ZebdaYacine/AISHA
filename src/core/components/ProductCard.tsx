@@ -5,7 +5,12 @@ interface ProductCardProps {
   image: string;
   title: string;
   description: string;
+  price: number;
+  stock: number;
   onBuy?: () => void;
+  onEdit?: () => void;
+  onMore?: () => void;
+  toggelMore?: boolean;
   isClient?: boolean;
 }
 
@@ -13,37 +18,80 @@ export default function ProductCard({
   image,
   title,
   description,
+  price,
+  stock,
   onBuy,
+  onEdit,
+  onMore,
+  toggelMore = false,
   isClient = true,
 }: ProductCardProps) {
   const [isImageLoading, setIsImageLoading] = useState(true);
 
   return (
     <div
-      className="card bg-base-100 shadow-sm w-full flex flex-col border cursor-pointer 
-                 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+      className="card bg-white shadow-md w-full flex flex-col border 
+                 cursor-pointer hover:shadow-xl transition-all duration-300 
+                 transform hover:scale-105 rounded-2xl overflow-hidden"
     >
-      <figure className="h-2/3 bg-light-text-secondary">
+      {/* Full image */}
+      <div className="relative w-full h-96 bg-gray-100">
         {isImageLoading && (
           <div className="skeleton w-full h-full animate-pulse"></div>
         )}
         <img
           src={image}
           alt={title}
-          className={`object-cover w-full h-full ${isImageLoading ? "hidden" : ""}`}
+          className={`w-full h-full object-cover ${
+            isImageLoading ? "hidden" : ""
+          }`}
           onLoad={() => setIsImageLoading(false)}
         />
-      </figure>
-      <div className="card-body h-1/3">
-        <h2 className="card-title">{title}</h2>
-        <p className="line-clamp-2">{description}</p>
-        {isClient && (
-          <div className="card-actions justify-end">
-            <button className="btn btn-primary" onClick={onBuy}>
+      </div>
+
+      {/* Content */}
+      <div className="card-body p-4 space-y-3">
+        <h2 className="card-title text-xl font-bold text-gray-800">{title}</h2>
+
+        {/* Short description only */}
+        {toggelMore ? (
+          <p className="text-gray-600">{description}</p>
+        ) : (
+          <p className="text-gray-600 line-clamp-2">
+            {description.slice(0, 100)} .....
+          </p>
+        )}
+
+        {/* Get more button */}
+        <button
+          className="text-blue-600 text-sm hover:underline focus:outline-none"
+          onClick={onMore}
+        >
+          {toggelMore ? "Show Less" : "Read More"}
+        </button>
+
+        {/* Price, stock & actions */}
+        <div className="flex justify-between items-center pt-2 border-t border-gray-200">
+          <div>
+            <p className="text-lg font-semibold text-gray-800">{price} DZD</p>
+            <p className="text-xs text-gray-500">Stock: {stock} peices</p>
+          </div>
+          {isClient ? (
+            <button
+              className="btn btn-primary px-4 py-2 rounded-lg"
+              onClick={onBuy}
+            >
               Buy Now
             </button>
-          </div>
-        )}
+          ) : (
+            <button
+              className="btn btn-secondary px-4 py-2 rounded-lg"
+              onClick={onEdit}
+            >
+              Edit
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

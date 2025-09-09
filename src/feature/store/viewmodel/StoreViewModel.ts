@@ -1,5 +1,11 @@
 import { makeAutoObservable } from "mobx";
-import { ref as databaseRef, onValue, push, set } from "firebase/database";
+import {
+  ref as databaseRef,
+  onValue,
+  push,
+  set,
+  update,
+} from "firebase/database";
 import { db } from "../../../core/firebase/config";
 
 export interface Product {
@@ -8,6 +14,8 @@ export interface Product {
   description: string;
   image: string;
   userId: string;
+  price: number;
+  stock: number;
 }
 
 class StoreViewModel {
@@ -48,7 +56,13 @@ class StoreViewModel {
   }
 
   addProduct = (
-    product: { title: string; description: string; image: File },
+    product: {
+      title: string;
+      description: string;
+      image: File;
+      price: number;
+      stock: number;
+    },
     userId: string
   ) => {
     this.isUploading = true;
@@ -75,6 +89,8 @@ class StoreViewModel {
           description: product.description,
           image: data.path,
           userId,
+          price: product.price,
+          stock: product.stock,
         };
         const productsDbRef = databaseRef(db, "products");
         const newProductRef = push(productsDbRef);
@@ -90,6 +106,65 @@ class StoreViewModel {
     };
 
     xhr.send(formData);
+  };
+
+  updateProduct = (
+    productId: string,
+    updates: {
+      title: string;
+      description: string;
+      price: number;
+      stock: number;
+    },
+    newImage?: File | null
+  ) => {
+    if (newImage) {
+      this.isUploading = true;
+      this.uploadProgress = 0;
+
+      const formData = new FormData();
+      formData.append("file", newImage as Blob);
+
+      
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://185.209.229.242:9999/upload", true);
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          this.uploadProgress = (event.loaded / event.total) * 100;
+        }
+      };
+
+      xhr.onload = () => {
+        this.isUploading = false;
+        if (xhr.status === 200) {
+          const data = JSON.parse(xhr.responseText);
+          const productRef = databaseRef(db, `products/${productId}`);
+          update(productRef, { ...updates, image: data.path });
+        } else {
+          this.error = xhr.statusText;
+        }
+      };
+
+      xhr.onerror = () => {
+        this.isUploading = false;
+        this.error = "Upload failed";
+      };
+
+      xhr.send(formData);
+    } else {
+      this.isUploading = true;
+      const productRef = databaseRef(db, `products/${productId}`);
+      update(productRef, updates)
+        .then(() => {
+          this.isUploading = false;
+        })
+        .catch((error) => {
+          this.error = error.message;
+          this.isUploading = false;
+        });
+    }
   };
 }
 
