@@ -69,7 +69,7 @@ export default function HomePage() {
       {!user && (
         <>
           {/* MAIN CONTENT */}
-          <div className="sm:mt-32 mt-28 flex  flex-col flex-1 justify-center items-center w-full h-screen">
+          <div className=" sm:mt-32 mt-28 flex  flex-col flex-1 justify-center items-center w-full h-screen">
             {/* 1/3 - Video Section */}
             <div className="h-1/3 w-full">
               <video
@@ -96,7 +96,7 @@ export default function HomePage() {
 
       <FilterTabs />
 
-      <div className="mt-10 w-3/4 mx-auto">
+      <div className="mt-20 w-3/4 mx-auto ">
         {/* Grid */}
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
@@ -105,7 +105,7 @@ export default function HomePage() {
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {paginatedProducts.map((product) => (
               <ProductCard
                 key={product.id}

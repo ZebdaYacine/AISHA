@@ -19,7 +19,7 @@ export default function App() {
       <ProfileProvider>
         <CraftsProvider>
           <BrowserRouter>
-            <div className="min-h-screen bg-base-100 flex flex-col">
+            <div className="min-h-screen bg-base-100 flex flex-col ">
               <Navbar />
               {/* Floating Theme Toggle */}
               <div className="hidden md:flex fixed bottom-6 right-6 p-3 rounded-full shadow-lg bg-primary text-white z-50">
@@ -33,7 +33,8 @@ export default function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/my-store" element={<StorePage />} />
                 <Route path="/product/:id" element={<ProductDetailsPage />} />
-                <Route path="/cart" element={<CartPage />} /> {/* Add CartPage route */}
+                <Route path="/cart" element={<CartPage />} />{" "}
+                {/* Add CartPage route */}
               </Routes>
               <div className="divider divide-x-2"></div>
               <Footer />

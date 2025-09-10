@@ -3,6 +3,9 @@ import { useSWRConfig } from "swr";
 import ImageDropzone from "../../../../core/components/ImageDropzone";
 import { useAuth } from "../../../../core/hooks/useAuth";
 import StoreViewModel from "../../viewmodel/StoreViewModel";
+import Swal from "sweetalert2";
+
+const MySwal = Swal;
 
 interface ModalAddProductProps {
   id: string;
@@ -65,9 +68,10 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = ({
       setPrice("");
       setStock("");
       setImageFile(null);
+      MySwal.fire("Added!", "Your product has been added successfully.", "success");
     } catch (error) {
       console.error("Failed to add product:", error);
-      alert("Failed to add product. Please try again.");
+      MySwal.fire("Error", "Failed to add product. Please try again.", "error");
     } finally {
       setIsUploading(false);
     }

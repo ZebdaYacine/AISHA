@@ -5,6 +5,9 @@ import { useAuth } from "../../../../core/hooks/useAuth";
 import StoreViewModel, {
   type Product,
 } from "../../viewmodel/StoreViewModel";
+import Swal from "sweetalert2";
+
+const MySwal = Swal;
 
 interface ModalUpdateProductProps {
   id: string;
@@ -74,9 +77,10 @@ const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = ({
       mutate("products");
       (document.getElementById(id) as HTMLDialogElement)?.close();
       setImageFile(null);
+      MySwal.fire("Updated!", "Your product has been updated successfully.", "success");
     } catch (error) {
       console.error("Failed to update product:", error);
-      alert("Failed to update product. Please try again.");
+      MySwal.fire("Error", "Failed to update product. Please try again.", "error");
     } finally {
       setIsUploading(false);
     }

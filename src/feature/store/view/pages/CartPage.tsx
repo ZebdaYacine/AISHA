@@ -112,6 +112,7 @@ const CartPage: React.FC = () => {
           totalItemAmount: newTotalItemAmount,
         });
         mutate(); // Revalidate SWR cache
+        MySwal.fire("Updated!", "Item quantity has been updated.", "success");
       }
     } catch (error) {
       console.error("Error updating quantity:", error);
