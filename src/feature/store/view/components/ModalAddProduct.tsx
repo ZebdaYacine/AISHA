@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { useSWRConfig } from "swr";
 import ImageDropzone from "../../../../core/components/ImageDropzone";
 import { useAuth } from "../../../../core/hooks/useAuth";
 import StoreViewModel from "../../viewmodel/StoreViewModel";
@@ -7,14 +7,12 @@ import StoreViewModel from "../../viewmodel/StoreViewModel";
 interface ModalAddProductProps {
   id: string;
   title: string;
-  viewModel: StoreViewModel;
   onClose?: () => void;
 }
 
-const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
+const ModalAddProduct: React.FC<ModalAddProductProps> = ({
   id,
   title,
-  viewModel,
   onClose,
 }) => {
   const [productTitle, setProductTitle] = useState("");
@@ -22,9 +20,11 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
   const [price, setPrice] = useState<number | "">("");
   const [stock, setStock] = useState<number | "">("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { user } = useAuth();
+  const { mutate } = useSWRConfig();
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!user) {
       alert("You must be logged in to add a product.");
       return;
@@ -46,25 +46,31 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
       return;
     }
 
-    viewModel.addProduct(
-      {
-        title: productTitle,
-        description,
-        image: imageFile,
-        price: price,
-        stock: stock,
-      },
-      user.uid
-    );
-
-    // Close modal after upload starts, ViewModel handles the rest
-    (document.getElementById(id) as HTMLDialogElement)?.close();
-    // Reset form
-    setProductTitle("");
-    setDescription("");
-    setPrice("");
-    setStock("");
-    setImageFile(null);
+    setIsUploading(true);
+    try {
+      await StoreViewModel.addProduct(
+        {
+          title: productTitle,
+          description,
+          image: imageFile,
+          price: price,
+          stock: stock,
+        },
+        user.uid
+      );
+      mutate("products");
+      (document.getElementById(id) as HTMLDialogElement)?.close();
+      setProductTitle("");
+      setDescription("");
+      setPrice("");
+      setStock("");
+      setImageFile(null);
+    } catch (error) {
+      console.error("Failed to add product:", error);
+      alert("Failed to add product. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -133,11 +139,11 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
           </div>
 
           {/* Progress Bar */}
-          {viewModel.isUploading && (
+          {isUploading && (
             <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
               <div
                 className="bg-blue-600 h-2.5 rounded-full"
-                style={{ width: `${viewModel.uploadProgress}%` }}
+                style={{ width: `100%` }}
               ></div>
             </div>
           )}
@@ -148,15 +154,15 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
           <button
             className="btn btn-primary"
             onClick={handleSave}
-            disabled={viewModel.isUploading}
+            disabled={isUploading}
           >
-            {viewModel.isUploading ? "Uploading..." : "Save"}
+            {isUploading ? "Uploading..." : "Save"}
           </button>
           <form method="dialog">
             <button
               className="btn btn-outline"
               onClick={onClose}
-              disabled={viewModel.isUploading}
+              disabled={isUploading}
             >
               Cancel
             </button>
@@ -165,6 +171,6 @@ const ModalAddProduct: React.FC<ModalAddProductProps> = observer(({
       </div>
     </dialog>
   );
-});
+};
 
 export default ModalAddProduct;

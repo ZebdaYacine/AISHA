@@ -1,19 +1,24 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 import ProductCard from "../../../../core/components/ProductCard";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useProfileContext } from "../../../../core/state/profileContext";
 import ModalAddProduct from "../components/ModalAddProduct";
 import ModalUpdateProduct from "../components/ModalUpdateProduct";
-import { useStoreViewModel } from "../../viewmodel/useStoreViewModel";
-import type { Product } from "../../viewmodel/StoreViewModel";
+import StoreViewModel, { type Product } from "../../viewmodel/StoreViewModel";
 
-const StorePage: React.FC = observer(() => {
+const fetcher = () => StoreViewModel.fetchProducts();
+
+const StorePage: React.FC = () => {
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = useSWR<Product[]>("products", fetcher);
   const [currentPage, setCurrentPage] = useState(1);
   const [toggelMore, setToggelMore] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { profileInfo } = useProfileContext();
-  const viewModel = useStoreViewModel();
 
   const capitalize = (str?: string) =>
     str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
@@ -21,9 +26,9 @@ const StorePage: React.FC = observer(() => {
   const firstName = capitalize(profileInfo?.firstName);
 
   const ITEMS_PER_PAGE = 16;
-  const totalPages = Math.ceil(viewModel.products.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
 
-  const paginatedProducts = viewModel.products.slice(
+  const paginatedProducts = products.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -44,7 +49,6 @@ const StorePage: React.FC = observer(() => {
           Discover your personalized store and manage your products with ease.
         </p>
       </div>
-
       {/* ✅ Store Header */}
       <div className="flex flex-row justify-between  mb-6">
         <button
@@ -59,21 +63,20 @@ const StorePage: React.FC = observer(() => {
           Add New Product
         </button>
       </div>
-
       {/* ✅ Product Grid */}
-      {viewModel.isLoading ? (
+      {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <span className="loading loading-spinner loading-lg"></span>
         </div>
-      ) : viewModel.error ? (
-        <div className="text-center text-red-500">{viewModel.error}</div>
+      ) : error ? (
+        <div className="text-center text-red-500">{error.message}</div>
       ) : (
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {paginatedProducts.map((product) => (
             <ProductCard
               key={product.id}
               id={product.id}
-              image={product.image}
+              image={`${product.image}`}
               title={product.title}
               description={product.description}
               price={product.price}
@@ -89,7 +92,6 @@ const StorePage: React.FC = observer(() => {
           ))}
         </div>
       )}
-
       {/* ✅ Pagination */}
       <div className="flex justify-center mt-8 gap-2 flex-wrap">
         <button
@@ -122,19 +124,17 @@ const StorePage: React.FC = observer(() => {
         <ModalAddProduct
           id="my_modal"
           title="Add New Product"
-          viewModel={viewModel}
           onClose={() => console.log("Modal closed")}
         />
         <ModalUpdateProduct
           id="update_modal"
           title="Update Product"
-          viewModel={viewModel}
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
         />
       </div>
     </div>
   );
-});
+};
 
 export default StorePage;

@@ -1,4 +1,5 @@
 import { useState, memo } from "react";
+import { Link } from "react-router-dom";
 import ModalBuyProduct from "./ModalBuyProduct";
 
 interface ProductCardProps {
@@ -41,7 +42,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(
 
     return (
       <>
-        <div
+        <Link
+          to={`/product/${id}`}
           className="card bg-white shadow-md w-full flex flex-col border 
                    cursor-pointer hover:shadow-xl transition-all duration-300 
                    transform hover:scale-105 rounded-2xl overflow-hidden"
@@ -110,7 +112,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(
               )}
             </div>
           </div>
-        </div>
+        </Link>
         <ModalBuyProduct
           id={modalId}
           product={{ id, title, price, stock }}

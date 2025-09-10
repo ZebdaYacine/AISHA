@@ -1,59 +1,67 @@
 import { useState, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { useSWRConfig } from "swr";
 import ImageDropzone from "../../../../core/components/ImageDropzone";
 import { useAuth } from "../../../../core/hooks/useAuth";
-import StoreViewModel from "../../viewmodel/StoreViewModel";
-import type { Product } from "../../viewmodel/StoreViewModel";
+import StoreViewModel, {
+  type Product,
+} from "../../viewmodel/StoreViewModel";
 
 interface ModalUpdateProductProps {
   id: string;
   title: string;
-  viewModel: StoreViewModel;
   product: Product | null;
   onClose?: () => void;
 }
 
-const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = observer(
-  ({ id, title, viewModel, product, onClose }) => {
-    const [productTitle, setProductTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState<number | "">("");
-    const [stock, setStock] = useState<number | "">("");
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const { user } = useAuth();
+const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = ({
+  id,
+  title,
+  product,
+  onClose,
+}) => {
+  const [productTitle, setProductTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState<number | "">("");
+  const [stock, setStock] = useState<number | "">("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const { user } = useAuth();
+  const { mutate } = useSWRConfig();
 
-    useEffect(() => {
-      if (product) {
-        setProductTitle(product.title);
-        setDescription(product.description);
-        setPrice(product.price);
-        setStock(product.stock);
-      }
-    }, [product]);
+  useEffect(() => {
+    if (product) {
+      setProductTitle(product.title);
+      setDescription(product.description);
+      setPrice(product.price);
+      setStock(product.stock);
+    }
+  }, [product]);
 
-    const handleSave = () => {
-      if (!user) {
-        alert("You must be logged in to update a product.");
-        return;
-      }
-      if (!product) {
-        alert("No product selected for update.");
-        return;
-      }
-      if (!productTitle.trim()) {
-        alert("Product title is required!");
-        return;
-      }
-      if (price === "" || price <= 0) {
-        alert("Please enter a valid price for the product.");
-        return;
-      }
-      if (stock === "" || stock < 0) {
-        alert("Please enter a valid stock quantity.");
-        return;
-      }
+  const handleSave = async () => {
+    if (!user) {
+      alert("You must be logged in to update a product.");
+      return;
+    }
+    if (!product) {
+      alert("No product selected for update.");
+      return;
+    }
+    if (!productTitle.trim()) {
+      alert("Product title is required!");
+      return;
+    }
+    if (price === "" || price <= 0) {
+      alert("Please enter a valid price for the product.");
+      return;
+    }
+    if (stock === "" || stock < 0) {
+      alert("Please enter a valid stock quantity.");
+      return;
+    }
 
-      viewModel.updateProduct(
+    setIsUploading(true);
+    try {
+      await StoreViewModel.updateProduct(
         product.id,
         {
           title: productTitle,
@@ -63,17 +71,16 @@ const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = observer(
         },
         imageFile
       );
-
-      // Close modal after upload starts, ViewModel handles the rest
+      mutate("products");
       (document.getElementById(id) as HTMLDialogElement)?.close();
-      // Reset image input after upload
       setImageFile(null);
-      setProductTitle("");
-      setDescription("");
-      setPrice("");
-      setStock("");
-      product = null;
-    };
+    } catch (error) {
+      console.error("Failed to update product:", error);
+      alert("Failed to update product. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
     return (
       <dialog id={id} className="modal">
@@ -147,11 +154,11 @@ const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = observer(
             </div>
 
             {/* Progress Bar */}
-            {viewModel.isUploading && (
+            {isUploading && (
               <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                 <div
                   className="bg-blue-600 h-2.5 rounded-full"
-                  style={{ width: `${viewModel.uploadProgress}%` }}
+                  style={{ width: `100%` }}
                 ></div>
               </div>
             )}
@@ -162,15 +169,15 @@ const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = observer(
             <button
               className="btn btn-primary"
               onClick={handleSave}
-              disabled={viewModel.isUploading}
+              disabled={isUploading}
             >
-              {viewModel.isUploading ? "Uploading..." : "Update"}
+              {isUploading ? "Uploading..." : "Update"}
             </button>
             <form method="dialog">
               <button
                 className="btn btn-outline"
                 onClick={onClose}
-                disabled={viewModel.isUploading}
+                disabled={isUploading}
               >
                 Cancel
               </button>
@@ -179,7 +186,6 @@ const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = observer(
         </div>
       </dialog>
     );
-  }
-);
+};
 
 export default ModalUpdateProduct;
