@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import useSWR from "swr";
 import { AuthContext } from "../../../../core/state/AuthContext";
 import { db } from "../../../../core/firebase/config";
@@ -58,6 +58,22 @@ const CartPage: React.FC = () => {
     isLoggedIn ? `carts/${user?.uid}` : null,
     fetchCartItems(user?.uid)
   );
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const paginatedCartItems = useMemo(() => {
+    if (!cartItems) return [];
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return cartItems.slice(startIndex, endIndex);
+  }, [cartItems, currentPage, itemsPerPage]);
+
+  const totalPages = useMemo(() => {
+    if (!cartItems) return 0;
+    return Math.ceil(cartItems.length / itemsPerPage);
+  }, [cartItems, itemsPerPage]);
 
   const handleRemoveItem = async (itemId: string, title: string) => {
     MySwal.fire({
@@ -147,7 +163,7 @@ const CartPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items List */}
         <div className="lg:col-span-2 space-y-4">
-          {cartItems.map((item) => (
+          {paginatedCartItems.map((item) => (
             <div
               key={item.id}
               className="flex items-center bg-base-100 shadow-lg rounded-lg p-4"
@@ -199,6 +215,43 @@ const CartPage: React.FC = () => {
               </div>
             </div>
           ))}
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-8">
+              <div className="join">
+                <button
+                  className="join-item btn"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                >
+                  previous
+                </button>
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    className={`join-item btn ${
+                      currentPage === index + 1 ? "btn-active btn-primary" : ""
+                    }`}
+                    onClick={() => setCurrentPage(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+                <button
+                  className="join-item btn"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Cart Summary */}

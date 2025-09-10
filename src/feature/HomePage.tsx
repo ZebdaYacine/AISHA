@@ -14,6 +14,13 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
+
+  const handleToggleMore = (id: string) => {
+    setExpandedProducts((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+    );
+  };
 
   useEffect(() => {
     const productsRef = ref(db, "products");
@@ -108,6 +115,8 @@ export default function HomePage() {
                 description={product.description}
                 price={product.price}
                 stock={product.stock}
+                onMore={() => handleToggleMore(product.id)}
+                toggelMore={expandedProducts.includes(product.id)}
                 onBuy={() => console.log(`Buy ${product.title}`)}
                 isClient={true}
               />

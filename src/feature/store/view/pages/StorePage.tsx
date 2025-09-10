@@ -16,7 +16,7 @@ const StorePage: React.FC = () => {
     isLoading,
   } = useSWR<Product[]>("products", fetcher);
   const [currentPage, setCurrentPage] = useState(1);
-  const [toggelMore, setToggelMore] = useState(false);
+  // const [toggelMore, setToggelMore] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { profileInfo } = useProfileContext();
 
@@ -32,6 +32,14 @@ const StorePage: React.FC = () => {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+
+  const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
+
+  const handleToggleMore = (id: string) => {
+    setExpandedProducts((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+    );
+  };
 
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
@@ -81,13 +89,11 @@ const StorePage: React.FC = () => {
               description={product.description}
               price={product.price}
               stock={product.stock}
-              toggelMore={toggelMore}
-              onBuy={() => console.log(`Buy ${product.title}`)}
-              onEdit={() => handleEdit(product)}
+              onMore={() => handleToggleMore(product.id)}
+              toggelMore={expandedProducts.includes(product.id)}
+              // onBuy={() => console.log(`Buy ${product.title}`)}
               isClient={false}
-              onMore={() => {
-                setToggelMore(!toggelMore);
-              }}
+              onEdit={() => handleEdit(product)}
             />
           ))}
         </div>

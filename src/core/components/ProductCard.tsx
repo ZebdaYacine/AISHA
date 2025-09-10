@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ModalBuyProduct from "./ModalBuyProduct";
 
 interface ProductCardProps {
@@ -40,13 +40,17 @@ const ProductCard: React.FC<ProductCardProps> = memo(
       }
     };
 
+    const navigate = useNavigate();
+
     return (
       <>
-        <Link
-          to={`/product/${id}`}
+        <div
           className="card bg-white shadow-md w-full flex flex-col border 
                    cursor-pointer hover:shadow-xl transition-all duration-300 
                    transform hover:scale-105 rounded-2xl overflow-hidden"
+          onDoubleClick={() => {
+            navigate(`/product/${id}`);
+          }}
         >
           {/* Full image */}
           <div className="relative w-full h-96 bg-gray-100">
@@ -112,7 +116,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(
               )}
             </div>
           </div>
-        </Link>
+        </div>
         <ModalBuyProduct
           id={modalId}
           product={{ id, title, price, stock }}
