@@ -1,6 +1,7 @@
-import { useState, memo } from "react";
+import { useState, memo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ModalBuyProduct from "./ModalBuyProduct";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 interface ProductCardProps {
   id: string;
@@ -9,9 +10,11 @@ interface ProductCardProps {
   description: string;
   price: number;
   stock: number;
+  isFavorite?: boolean;
   onBuy?: () => void;
   onEdit?: () => void;
   onMore?: () => void;
+  dispalyFavorite?: boolean;
   toggelMore?: boolean;
   isClient?: boolean;
 }
@@ -29,15 +32,29 @@ const ProductCard: React.FC<ProductCardProps> = memo(
     onMore,
     toggelMore = false,
     isClient = true,
+    dispalyFavorite = true,
+    isFavorite = false,
   }) => {
     const [isImageLoading, setIsImageLoading] = useState(true);
     const modalId = `modal_buy_${id}`;
+
+    const [isFavoriteRef, setisFav] = useState(isFavorite);
 
     const handleBuyClick = () => {
       (document.getElementById(modalId) as HTMLDialogElement)?.showModal();
       if (onBuy) {
         onBuy();
       }
+    };
+
+    const favoriteRef = useRef<HTMLSpanElement>(null);
+
+    const handleFavorite = () => {
+      favoriteRef.current?.classList.add("animate-ping");
+      setTimeout(() => {
+        favoriteRef.current?.classList.remove("animate-ping");
+      }, 1000);
+      setisFav(!isFavoriteRef);
     };
 
     const navigate = useNavigate();
@@ -57,17 +74,37 @@ const ProductCard: React.FC<ProductCardProps> = memo(
             {isImageLoading && (
               <div className="skeleton w-full h-full animate-pulse"></div>
             )}
-            <img
-              src={image}
-              alt={title}
-              loading="lazy"
-              className={`w-full h-full object-cover transition-opacity duration-500 ${
-                isImageLoading ? "opacity-0" : "opacity-100"
-              }`}
-              onLoad={() => setIsImageLoading(false)}
-            />
+            <div className="absolute inset-0 bg-black">
+              <img
+                src={image}
+                alt={title}
+                loading="lazy"
+                className={`w-full h-full object-cover transition-opacity duration-500 ${
+                  isImageLoading ? "opacity-0" : "opacity-100"
+                }`}
+                onLoad={() => setIsImageLoading(false)}
+              />
+              {onBuy && dispalyFavorite && (
+                <div className="fixed  top-1 right-6 p-2  rounded-full   ">
+                  <span ref={favoriteRef}>
+                    {isFavoriteRef ? (
+                      <FaHeart
+                        className="w-7 h-7 cursor-pointer text-red-500 transition-transform"
+                        onClick={handleFavorite}
+                        title="Remove from Favorites"
+                      />
+                    ) : (
+                      <FaRegHeart
+                        className="w-7 h-7 cursor-pointer text-white transition-transform"
+                        onClick={handleFavorite}
+                        title="Add to Favorites"
+                      />
+                    )}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-
           {/* Content */}
           <div className="card-body p-4 space-y-3">
             <h2 className="card-title text-xl font-bold text-gray-800">
@@ -94,10 +131,10 @@ const ProductCard: React.FC<ProductCardProps> = memo(
             {/* Price, stock & actions */}
             <div className="flex justify-between items-center pt-2 border-t border-gray-200">
               <div>
-                <p className="text-lg font-semibold text-gray-800">
+                <p className="text-xl font-semibold text-gray-800">
                   {price} DZD
                 </p>
-                <p className="text-xs text-gray-500">Stock: {stock} peices</p>
+                <p className="text-lg text-gray-500">Stock: {stock} peices</p>
               </div>
               {isClient ? (
                 <button

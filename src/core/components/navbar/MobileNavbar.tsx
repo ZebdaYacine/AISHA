@@ -51,15 +51,18 @@ export default function MobileNavbar({
                 />
               )}
 
-              <div className="indicator">
-                <span className="indicator-item indicator-center badge badge-secondary h-4 w-4">
-                  {cartItemCount}
-                </span>
-                <ShoppingBasket
-                  className="w-6 h-6 mr-2"
-                  onClick={() => navigate("/cart")}
-                />
-              </div>
+              {isLoggedIn && (
+                <div className="indicator">
+                  <span className="indicator-item indicator-center badge badge-secondary h-4 w-4">
+                    {cartItemCount}
+                  </span>
+                  <ShoppingBasket
+                    className="w-6 h-6 mr-2"
+                    onClick={() => navigate("/cart")}
+                  />
+                </div>
+              )}
+
               {craftsmanInfo?.status === "accepted" && (
                 <IoStorefrontOutline
                   onClick={() => navigate("/my-store")}
@@ -84,7 +87,6 @@ export default function MobileNavbar({
               </label>
             </div>
           </div>
-
           {/* Search Bar */}
           <div className="px-2 mt-2 w-full">
             <label className="input rounded-2xl w-full">

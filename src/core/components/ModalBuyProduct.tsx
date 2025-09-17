@@ -1,7 +1,10 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { db } from "../firebase/config";
-import { ref, push, set } from "firebase/database";
+import { ref, push, set, update } from "firebase/database"; // Added update
+import Swal from "sweetalert2";
+
+const MySwal = Swal;
 
 interface ModalBuyProductProps {
   id: string;
@@ -31,15 +34,27 @@ const ModalBuyProduct: React.FC<ModalBuyProductProps> = ({
 
   const handlePurchase = async () => {
     if (!user) {
-      alert("You must be logged in to purchase a product.");
+      MySwal.fire({
+        icon: "error",
+        title: "Authentication Required",
+        text: "You must be logged in to purchase a product.",
+      });
       return;
     }
     if (quantity > product.stock) {
-      alert("The requested quantity exceeds the available stock.");
+      MySwal.fire({
+        icon: "error",
+        title: "Out of Stock",
+        text: "The requested quantity exceeds the available stock.",
+      });
       return;
     }
     if (quantity <= 0) {
-      alert("Please enter a valid quantity.");
+      MySwal.fire({
+        icon: "error",
+        title: "Invalid Quantity",
+        text: "Please enter a valid quantity.",
+      });
       return;
     }
 
@@ -52,8 +67,8 @@ const ModalBuyProduct: React.FC<ModalBuyProductProps> = ({
       deliveryOption: deliveryOption,
       totalAmount: totalAmount,
       time: new Date().toISOString(),
-      location: "worhouse aisha", // Initial location
-      status: "pending", // Add a default status
+      location: "worhouse aisha", 
+      status: "pending", 
     };
 
     setIsSubmitting(true);
@@ -61,11 +76,24 @@ const ModalBuyProduct: React.FC<ModalBuyProductProps> = ({
       const purchasesRef = ref(db, 'purchases');
       const newPurchaseRef = push(purchasesRef);
       await set(newPurchaseRef, purchaseRequest);
+
+      // Update product stock
+      const productRef = ref(db, `products/${product.id}`);
+      await update(productRef, { stock: product.stock - quantity });
+
       console.log("Purchase request sent with key: ", newPurchaseRef.key);
-      alert("Purchase request sent successfully!");
+      MySwal.fire({
+        icon: "success",
+        title: "Purchase Successful!",
+        text: "Your purchase request has been sent successfully!",
+      });
     } catch (error) {
       console.error("Error sending purchase request: ", error);
-      alert("Failed to send purchase request. Please try again.");
+      MySwal.fire({
+        icon: "error",
+        title: "Purchase Failed",
+        text: "Failed to send purchase request. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }

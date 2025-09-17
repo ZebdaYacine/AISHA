@@ -53,19 +53,21 @@ export default function DesktopNavbar({
               </div>
             )}
 
-            <div className="indicator">
-              <span className="indicator-item indicator-center badge badge-secondary h-4 w-4">
-                {cartItemCount}
-              </span>
-              <div className="w-10 h-10 flex items-center justify-center">
-                <HiOutlineShoppingCart
-                  className="w-8 h-8 cursor-pointer"
-                  onClick={() => navigate("/cart")}
-                />
+            {isLoggedIn && (
+              <div className="indicator">
+                <span className="indicator-item indicator-center badge badge-secondary h-4 w-4">
+                  {cartItemCount}
+                </span>
+                <div className="w-10 h-10 flex items-center justify-center">
+                  <HiOutlineShoppingCart
+                    className="w-8 h-8 cursor-pointer"
+                    onClick={() => navigate("/cart")}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
-            {craftsmanInfo?.status === "accepted" && (
+            {craftsmanInfo?.status === "accepted" && isLoggedIn && (
               <div className="w-10 h-10 flex items-center justify-center">
                 <HiOutlineBuildingStorefront
                   onClick={() => navigate("/my-store")}
