@@ -6,6 +6,7 @@ import { useCraftsContext } from "../../hooks/useProfile";
 
 import { HiOutlineShoppingCart } from "react-icons/hi";
 import { HiOutlineBuildingStorefront } from "react-icons/hi2";
+import ProfileMenu from "./ProfileMenu";
 
 interface DesktopNavbarProps {
   cartItemCount: number;
@@ -16,42 +17,65 @@ export default function DesktopNavbar({
   cartItemCount,
   craftItems,
 }: DesktopNavbarProps) {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, logout, signOutUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { craftsmanInfo } = useCraftsContext();
+  const { craftsmanInfo, setCraftsmanInfo } = useCraftsContext();
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
   const isHome = location.pathname === "/";
+
+  const handleLogout = async () => {
+    const { error } = await signOutUser();
+    if (error) {
+      console.error("Failed to log out:", error);
+      return;
+    }
+
+    logout();
+    setCraftsmanInfo(null);
+    navigate("/");
+  };
+
+  const renderProfileArea = () => {
+    if (isAuthPage) {
+      return (
+        <div className="w-10 h-10 flex items-center justify-center">
+          <FiHome className="w-8 h-8 cursor-pointer" />
+        </div>
+      );
+    }
+
+    if (!isLoggedIn) {
+      return (
+        <div className="w-10 h-10 flex items-center justify-center">
+          <FiUser
+            className="w-8 h-8 cursor-pointer"
+            onClick={() => navigate("/register")}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <ProfileMenu
+        userPhoto={user?.photoURL}
+        onProfile={() => navigate("/profile")}
+        onCart={() => navigate("/cart")}
+        onOrders={() => navigate("/orders")}
+        onLogout={handleLogout}
+        size="lg"
+        align="center"
+      />
+    );
+  };
 
   return (
     <div className="hidden lg:flex navbar fixed top-0 z-40 bg-base-100 px-4 shadow-xl w-full flex-col items-center">
       <div className="w-full flex justify-between items-center py-2">
         <div className="flex flex-row w-full items-center">
           <div className="flex gap-2 items-center">
-            {isAuthPage ? (
-              <div className="w-10 h-10 flex items-center justify-center">
-                <FiHome className="w-8 h-8 cursor-pointer" />
-              </div>
-            ) : isLoggedIn && user?.photoURL ? (
-              <div className="w-10 h-10 flex items-center justify-center">
-                <img
-                  src={user.photoURL}
-                  alt="Profile"
-                  className="w-10 h-10 rounded-full object-cover cursor-pointer"
-                  onClick={() => navigate("/profile")}
-                />
-              </div>
-            ) : (
-              <div className="w-10 h-10 flex items-center justify-center">
-                <FiUser
-                  className="w-8 h-8 cursor-pointer"
-                  onClick={() =>
-                    navigate(isLoggedIn ? "/profile" : "/register")
-                  }
-                />
-              </div>
-            )}
+            {renderProfileArea()}
 
             {isLoggedIn && (
               <div className="indicator">

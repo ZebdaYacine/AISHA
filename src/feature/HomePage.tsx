@@ -33,7 +33,7 @@ export default function HomePage() {
             const productsList = Object.keys(data).map((key) => ({
               id: key,
               ...data[key],
-              image: `http://185.209.229.242:9999${data[key].image}`,
+              image: `${data[key].image}`,
             }));
             setProducts(productsList);
           } else {

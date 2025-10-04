@@ -12,6 +12,9 @@ export interface Product {
 }
 
 class StoreViewModel {
+  // make it static so it can be used inside static methods
+  private static base_url = "http://185.209.230.104:8882/upload";
+
   static fetchProducts = (): Promise<Product[]> => {
     return new Promise((resolve, reject) => {
       const productsDbRef = databaseRef(db, "products");
@@ -22,16 +25,14 @@ class StoreViewModel {
             const products = Object.keys(data).map((key) => ({
               id: key,
               ...data[key],
-              image: `http://185.209.229.242:9999${data[key].image}`,
+              image: `${data[key].image}`,
             }));
             resolve(products);
           } else {
             resolve([]);
           }
         })
-        .catch((error) => {
-          reject(error);
-        });
+        .catch((error) => reject(error));
     });
   };
 
@@ -45,27 +46,39 @@ class StoreViewModel {
     },
     userId: string
   ) => {
-    const formData = new FormData();
-    formData.append("file", product.image as Blob);
+    const fileData = await StoreViewModel.fileToBase64(product.image);
 
-    const response = await fetch("http://185.209.229.242:9999/upload", {
+    const response = await fetch(StoreViewModel.base_url, {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        file_data: fileData,
+        file_name: product.image.name,
+      }),
     });
 
     if (!response.ok) {
-      throw new Error(response.statusText);
+      throw new Error(`Upload failed: ${response.statusText}`);
     }
 
     const data = await response.json();
+    const uploadedImagePath = data?.file_url ?? data?.url ?? data?.path;
+
+    if (!uploadedImagePath) {
+      throw new Error("Upload response missing image path");
+    }
+
     const newProductData = {
       title: product.title,
       description: product.description,
-      image: data.path,
+      image: uploadedImagePath,
       userId,
       price: product.price,
       stock: product.stock,
     };
+
     const productsDbRef = databaseRef(db, "products");
     const newProductRef = push(productsDbRef);
     await set(newProductRef, newProductData);
@@ -83,25 +96,54 @@ class StoreViewModel {
   ) => {
     let imageUrl = "";
     if (newImage) {
-      const formData = new FormData();
-      formData.append("file", newImage as Blob);
+      const fileData = await StoreViewModel.fileToBase64(newImage);
 
-      const response = await fetch("http://185.209.229.242:9999/upload", {
+      const response = await fetch(StoreViewModel.base_url, {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          file_data: fileData,
+          file_name: newImage.name,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error(response.statusText);
+        throw new Error(`Upload failed: ${response.statusText}`);
       }
+
       const data = await response.json();
-      imageUrl = data.path;
+      imageUrl = data?.file_url ?? data?.url ?? data?.path ?? "";
+
+      if (!imageUrl) {
+        throw new Error("Upload response missing image path");
+      }
     }
 
     const productRef = databaseRef(db, `products/${productId}`);
     const finalUpdates = { ...updates, ...(imageUrl && { image: imageUrl }) };
     await update(productRef, finalUpdates);
   };
+
+  private static fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result !== "string") {
+          reject(new Error("Failed to convert file to base64"));
+          return;
+        }
+        const base64 = result.includes(",") ? result.split(",")[1] : result;
+        resolve(base64);
+      };
+      reader.onerror = () => {
+        reject(reader.error ?? new Error("Failed to read file"));
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
   static fetchProductById = (productId: string): Promise<Product | null> => {
     return new Promise((resolve, reject) => {
@@ -111,7 +153,7 @@ class StoreViewModel {
           if (snapshot.exists()) {
             const data = snapshot.val();
             resolve({
-              id: snapshot.key,
+              id: snapshot.key!,
               ...data,
               image: `${data.image}`,
             } as Product);
@@ -119,9 +161,7 @@ class StoreViewModel {
             resolve(null);
           }
         })
-        .catch((error) => {
-          reject(error);
-        });
+        .catch((error) => reject(error));
     });
   };
 }

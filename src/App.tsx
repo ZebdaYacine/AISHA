@@ -9,6 +9,7 @@ import ProfilePage from "./feature/profile/view/pages/ProfilePage";
 import StorePage from "./feature/store/view/pages/StorePage";
 import ProductDetailsPage from "./feature/store/view/pages/ProductDetailsPage";
 import CartPage from "./feature/store/view/pages/CartPage"; // Import CartPage
+import MyOrdersPage from "./feature/orders/view/pages/MyOrdersPage";
 import { ProfileProvider } from "./core/state/profileContext";
 import { CraftsProvider } from "./core/state/craftsContext";
 import ThemeToggle from "./core/components/ThemeToggle";
@@ -33,7 +34,8 @@ export default function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/my-store" element={<StorePage />} />
                 <Route path="/product/:id" element={<ProductDetailsPage />} />
-                <Route path="/cart" element={<CartPage />} />{" "}
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/orders" element={<MyOrdersPage />} />
                 {/* Add CartPage route */}
               </Routes>
               <div className="divider divide-x-2"></div>

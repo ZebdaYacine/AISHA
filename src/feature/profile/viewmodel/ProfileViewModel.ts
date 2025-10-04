@@ -2,8 +2,60 @@ import { useEffect } from "react";
 import { ref, set, get } from "firebase/database";
 import { useAuth } from "../../../core/hooks/useAuth";
 import { db } from "../../../core/firebase/config";
-import { useCraftsContext, useProfileContext } from "../../../core/hooks/useProfile";
+import {
+  useCraftsContext,
+  useProfileContext,
+} from "../../../core/hooks/useProfile";
 import type { CraftsmanInfo } from "../data/datasource/ProfileDtos";
+
+const UPLOAD_ENDPOINT = "http://185.209.230.104:8882/upload";
+
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== "string") {
+        reject(new Error("Failed to convert file to base64"));
+        return;
+      }
+      const base64 = result.includes(",") ? result.split(",")[1] : result;
+      resolve(base64);
+    };
+    reader.onerror = () => {
+      reject(reader.error ?? new Error("Failed to read file"));
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
+const uploadProofFile = async (file: File): Promise<string> => {
+  const fileData = await fileToBase64(file);
+
+  const response = await fetch(UPLOAD_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      file_data: fileData,
+      file_name: file.name,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const data = await response.json();
+  const uploadedPath = data?.url ?? data?.path;
+
+  if (!uploadedPath) {
+    throw new Error("Upload response missing image path");
+  }
+
+  return uploadedPath;
+};
 
 export function useProfileViewModel() {
   const { user, isLoggedIn, loading } = useAuth();
@@ -61,15 +113,22 @@ export function useProfileViewModel() {
     message: string;
   }> => {
     if (!user) return { success: false, message: "User not authenticated" };
-
     try {
       // Save user profile data
       await set(ref(db, "users/" + user.uid), profileInfo);
-
       // Save craftsman request
       if (craftsmanInfo) {
+        let proofValue: string | null | undefined = craftsmanInfo.proof;
+        if (
+          craftsmanInfo.proof &&
+          typeof craftsmanInfo.proof !== "string" &&
+          craftsmanInfo.proof instanceof File
+        ) {
+          proofValue = await uploadProofFile(craftsmanInfo.proof);
+        }
         const updatedCraftsmanInfo: CraftsmanInfo = {
           ...craftsmanInfo,
+          proof: proofValue ?? null,
           userId: user.uid,
           status: "pending",
         };
@@ -77,12 +136,10 @@ export function useProfileViewModel() {
           ref(db, "craftsman_requests/" + user.uid),
           updatedCraftsmanInfo
         );
+        setCraftsmanInfo(updatedCraftsmanInfo);
       }
-
-      // Re-fetch data after saving
       await fetchUserData();
       await fetchCraftsmanData();
-
       return { success: true, message: "Profile updated successfully!" };
     } catch (error) {
       console.error("Error updating profile: ", error);

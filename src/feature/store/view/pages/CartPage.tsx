@@ -170,7 +170,7 @@ const CartPage: React.FC = () => {
               className="flex items-center bg-base-100 shadow-lg rounded-lg p-4"
             >
               <img
-                src={`http://185.209.229.242:9999${item.image}`}
+                src={`${item.image}`}
                 alt={item.title}
                 className="w-24 h-24 object-cover rounded-md mr-4"
               />

@@ -12,6 +12,6 @@ export interface CraftsmanInfo {
   userId?: string;
   craftType?: string;
   storeAddress?: string;
-  proof?: File | null;
+  proof?: File | string | null;
   status?: "pending" | "rejected" | "accepted" | null;
 }

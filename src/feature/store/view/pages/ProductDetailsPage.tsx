@@ -82,20 +82,73 @@ const ProductDetailsPage: React.FC = () => {
 
     setIsBuyingNow(true);
     try {
-      // In a real application, this would involve a payment gateway and order processing.
-      // For now, we'll simulate a successful purchase.
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+      let deliveryLocation = "Aicha Office";
+
+      if (deliveryOption === "home") {
+        const { value: enteredLocation, isDismissed } = await MySwal.fire({
+          title: "Delivery Location",
+          input: "text",
+          inputLabel: "Where should we deliver your order?",
+          inputPlaceholder: "Enter delivery address",
+          inputAttributes: {
+            autocapitalize: "on",
+            autocorrect: "on",
+          },
+          confirmButtonText: "Confirm",
+          showCancelButton: true,
+          cancelButtonText: "Cancel",
+        });
+
+        if (isDismissed) {
+          return;
+        }
+
+        const trimmedLocation = enteredLocation?.trim();
+
+        if (!trimmedLocation) {
+          MySwal.fire({
+            icon: "warning",
+            title: "Location Required",
+            text: "Please provide a delivery location to continue.",
+          });
+          return;
+        }
+
+        deliveryLocation = trimmedLocation;
+      }
+
+      const ordersRef = ref(db, "orders");
+      const newOrderRef = push(ordersRef);
+      await set(newOrderRef, {
+        orderId: newOrderRef.key,
+        trackingNumber: newOrderRef.key,
+        userId: user.uid,
+        productId: product?.id,
+        productTitle: product?.title,
+        productPrice: product?.price,
+        productImage: product?.image,
+        quantity,
+        stock: quantity,
+        amount: totalAmount,
+        deliveryOption,
+        deliveryOn: deliveryOption,
+        deliveryCost,
+        isPaid: false,
+        status: "to_pay",
+        location: deliveryLocation,
+        createdAt: serverTimestamp(),
+      });
 
       MySwal.fire({
         icon: "success",
-        title: "Purchase Successful!",
-        html: `<p>You have successfully purchased ${quantity} x ${
-          product?.title
-        }.</p>
+        title: "Order Created!",
+        html: `<p>Your order for ${quantity} × ${product?.title} is confirmed.</p>
                <p>Total amount: ${totalAmount.toFixed(2)} DZD</p>
+               <p>Delivery cost: ${deliveryCost.toFixed(2)} DZD</p>
                <p>Delivery: ${
                  deliveryOption === "home" ? "Home Delivery" : "Office Pickup"
-               }</p>`,
+               }</p>
+               <p>Location: ${deliveryLocation}</p>`,
       });
     } catch (error) {
       console.error("Error during purchase:", error);
@@ -224,7 +277,7 @@ const ProductDetailsPage: React.FC = () => {
         </div>
         {/* Product Image */}
         <ImageZoom
-          src={`http://185.209.229.242:9999${product.image}`}
+          src={`${product.image}`}
           alt={product.title}
           className="w-full h-auto object-cover rounded-lg shadow-lg"
         />

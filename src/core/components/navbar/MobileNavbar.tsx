@@ -1,4 +1,4 @@
-import { FiUser, FiHome } from "react-icons/fi";
+import { FiUser, FiHome, FiLogOut, FiList } from "react-icons/fi";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { ShoppingBasket } from "lucide-react";
 import { CiSearch } from "react-icons/ci";
@@ -18,12 +18,70 @@ export default function MobileNavbar({
   cartItemCount,
   craftItems,
 }: MobileNavbarProps) {
-  const { isLoggedIn, user } = useAuth();
-  const { craftsmanInfo } = useCraftsContext();
+  const { isLoggedIn, user, logout, signOutUser } = useAuth();
+  const { craftsmanInfo, setCraftsmanInfo } = useCraftsContext();
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
+
+  const closeDrawer = () => {
+    const drawer = document.getElementById(
+      "mobile-drawer"
+    ) as HTMLInputElement | null;
+    if (drawer) {
+      drawer.checked = false;
+    }
+  };
+
+  const handleLogout = async () => {
+    const { error } = await signOutUser();
+    if (error) {
+      console.error("Failed to log out:", error);
+      return;
+    }
+
+    logout();
+    setCraftsmanInfo(null);
+    closeDrawer();
+    navigate("/");
+  };
+
+  const renderProfileMenu = () => {
+    if (isAuthPage) {
+      return <FiHome className="w-6 h-6 mr-2" />;
+    }
+
+    if (!isLoggedIn) {
+      return (
+        <FiUser
+          className="w-6 h-6 mr-2"
+          onClick={() => navigate("/register")}
+        />
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        className="w-8 h-8 mr-2 overflow-hidden rounded-full"
+        onClick={() => {
+          closeDrawer();
+          navigate("/profile");
+        }}
+      >
+        {user?.photoURL ? (
+          <img
+            src={user.photoURL}
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <FiUser className="w-6 h-6" />
+        )}
+      </button>
+    );
+  };
 
   return (
     <div className="drawer drawer-end lg:hidden z-50">
@@ -33,23 +91,7 @@ export default function MobileNavbar({
           {/* Top Row */}
           <div className="flex flex-row justify-between items-center">
             <div className="flex gap-2 items-center">
-              {isAuthPage ? (
-                <FiHome className="w-6 h-6 mr-2" />
-              ) : isLoggedIn && user?.photoURL ? (
-                <img
-                  src={user.photoURL}
-                  alt="Profile"
-                  className="w-6 h-6 rounded-full mr-2 object-cover"
-                  onClick={() => navigate("/profile")}
-                />
-              ) : (
-                <FiUser
-                  className="w-6 h-6 mr-2"
-                  onClick={() =>
-                    navigate(isLoggedIn ? "/profile" : "/register")
-                  }
-                />
-              )}
+              {renderProfileMenu()}
 
               {isLoggedIn && (
                 <div className="indicator">
@@ -106,7 +148,10 @@ export default function MobileNavbar({
               {craftsmanInfo?.status === "accepted" && (
                 <li className="animate-pulse">
                   <button
-                    onClick={() => navigate("/my-store")}
+                    onClick={() => {
+                      navigate("/my-store");
+                      closeDrawer();
+                    }}
                     className="btn btn-ghost justify-start"
                   >
                     <IoStorefrontOutline className="w-6 h-6 mr-2" />
@@ -115,15 +160,45 @@ export default function MobileNavbar({
                 </li>
               )}
               <li>
-                <button className="btn btn-ghost justify-start">
+                <button
+                  className="btn btn-ghost justify-start"
+                  onClick={closeDrawer}
+                >
                   <MdOutlineFavoriteBorder className="w-6 h-6 mr-2" />
                   Favorites
                 </button>
               </li>
               <li>
-                <button className="btn btn-ghost justify-start">
+                <button
+                  className="btn btn-ghost justify-start"
+                  onClick={() => {
+                    navigate("/cart");
+                    closeDrawer();
+                  }}
+                >
                   <MdOutlineShoppingCart className="w-6 h-6 mr-2" />
                   Cart
+                </button>
+              </li>
+              <li>
+                <button
+                  className="btn btn-ghost justify-start"
+                  onClick={() => {
+                    navigate("/orders");
+                    closeDrawer();
+                  }}
+                >
+                  <FiList className="w-6 h-6 mr-2" />
+                  My Orders
+                </button>
+              </li>
+              <li>
+                <button
+                  className="btn btn-error justify-start text-base-100"
+                  onClick={() => void handleLogout()}
+                >
+                  <FiLogOut className="w-6 h-6 mr-2" />
+                  Logout
                 </button>
               </li>
             </>
@@ -133,6 +208,7 @@ export default function MobileNavbar({
               <ThemeToggle /> Theme
             </div>
           </li>
+
           <li className="font-bold text-base mt-4">Crafts</li>
           {craftItems.map((item) => (
             <li key={item.label}>
