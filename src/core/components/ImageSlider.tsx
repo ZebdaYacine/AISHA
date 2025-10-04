@@ -4,15 +4,17 @@ import Autoplay from "embla-carousel-autoplay";
 export default function ImageSlider() {
   const [emblaRef] = useEmblaCarousel({ loop: true }, [Autoplay()]);
 
+  const assetBasePath = "/dist/aisha";
+
   const heritageItems = [
-    { imageSrc: "/public/aisha/A1.jpg" },
-    { imageSrc: "/public/aisha/B1.jpg" },
-    { imageSrc: "/public/aisha/D1.jpg" },
-    { imageSrc: "/public/aisha/O5.jpg" },
-    { imageSrc: "/public/aisha/CP1.jpg" },
-    { imageSrc: "/public/aisha/M1.jpg" },
-    { imageSrc: "/public/aisha/J1.jpg" },
-    { imageSrc: "/public/aisha/plateu en bois 1.jpg" },
+    { imageSrc: `${assetBasePath}/A1.jpg` },
+    { imageSrc: `${assetBasePath}/B1.jpg` },
+    { imageSrc: `${assetBasePath}/D1.jpg` },
+    { imageSrc: `${assetBasePath}/O5.jpg` },
+    { imageSrc: `${assetBasePath}/CP1.jpg` },
+    { imageSrc: `${assetBasePath}/M1.jpg` },
+    { imageSrc: `${assetBasePath}/J1.jpg` },
+    { imageSrc: `${assetBasePath}/plateu en bois 1.jpg` },
   ];
 
   return (

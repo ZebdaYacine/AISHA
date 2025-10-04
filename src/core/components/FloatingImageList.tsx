@@ -1,11 +1,13 @@
 import FloatingImage from "./FloatingImage";
 
 export default function FloatingList() {
+  const assetBasePath = "/dist/aisha";
+
   return (
     <div className="absolute inset-0 z-0 pointer-events-none">
       <div className="hidden sm:block">
         <FloatingImage
-          imageSrc="/public/aisha/B1.jpg"
+          imageSrc={`${assetBasePath}/B1.jpg`}
           imageAlt="Shoes"
           size="lg"
           position="top-left"
@@ -14,7 +16,7 @@ export default function FloatingList() {
       </div>
       <div className="hidden sm:block">
         <FloatingImage
-          imageSrc="/public/aisha/C1.jpg"
+          imageSrc={`${assetBasePath}/C1.jpg`}
           imageAlt="Artisan Craft"
           size="md"
           position="bottom-right"
@@ -23,7 +25,7 @@ export default function FloatingList() {
       </div>
       <div className="hidden sm:block">
         <FloatingImage
-          imageSrc="/public/aisha/B2.jpg"
+          imageSrc={`${assetBasePath}/B2.jpg`}
           imageAlt="Shoes"
           size="lg"
           position="top-right"
@@ -32,7 +34,7 @@ export default function FloatingList() {
       </div>
       <div className="hidden sm:block">
         <FloatingImage
-          imageSrc="/public/aisha/A1.jpg"
+          imageSrc={`${assetBasePath}/A1.jpg`}
           imageAlt="Shoes"
           size="lg"
           position="top-center-left"
@@ -41,7 +43,7 @@ export default function FloatingList() {
       </div>
       <div className="hidden sm:block">
         <FloatingImage
-          imageSrc="/public/aisha/CP1.jpg"
+          imageSrc={`${assetBasePath}/CP1.jpg`}
           imageAlt="Shoes"
           size="lg"
           position="bottom-far-right"
@@ -50,7 +52,7 @@ export default function FloatingList() {
       </div>
       <div className="hidden sm:block">
         <FloatingImage
-          imageSrc="/public/aisha/D1.jpg"
+          imageSrc={`${assetBasePath}/D1.jpg`}
           imageAlt="Shoes"
           size="lg"
           position="bottom-left"
@@ -59,7 +61,7 @@ export default function FloatingList() {
       </div>
       <div className="hidden sm:block">
         <FloatingImage
-          imageSrc="/public/aisha/C1.jpg"
+          imageSrc={`${assetBasePath}/C1.jpg`}
           imageAlt="Artisan Craft"
           size="md"
           position="bottom-right"

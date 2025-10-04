@@ -1,29 +1,31 @@
 import { useState } from "react";
 
+const assetBasePath = "/dist/aisha";
+
 const crafts = [
   {
     name: "Pottery",
-    image: "/public/aisha/133T695O4.jpg",
+    image: `${assetBasePath}/133T695O4.jpg`,
     description: "Traditional clay pottery with unique Berber patterns.",
   },
   {
     name: "Weaving",
-    image: "/public/aisha/6.jpg",
+    image: `${assetBasePath}/6.jpg`,
     description: "Handwoven textiles using ancestral techniques.",
   },
   {
     name: "Metalwork",
-    image: "/public/aisha/D1.jpg",
+    image: `${assetBasePath}/D1.jpg`,
     description: "Intricate metal artifacts crafted by skilled artisans.",
   },
   {
     name: "Embroidery",
-    image: "/public/aisha/B1.jpg",
+    image: `${assetBasePath}/B1.jpg`,
     description: "Colorful thread embroidery with regional symbols.",
   },
   {
     name: "Wood Carving",
-    image: "/public/aisha/C2.png",
+    image: `${assetBasePath}/C2.png`,
     description: "Hand-carved wooden décor and tools.",
   },
 ];

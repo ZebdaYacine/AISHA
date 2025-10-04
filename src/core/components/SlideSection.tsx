@@ -29,17 +29,17 @@ export default function SlideSection() {
           <div className="flex flex-col gap-3 overflow-y-auto max-h-[80%] pr-2">
             {[
               {
-                src: "/public/aisha/A1.jpg",
+                src: "/dist/aisha/A1.jpg",
                 name: "Short jacket in long-pile faux fur",
                 price: "$218.00",
               },
               {
-                src: "/public/aisha/B1.jpg",
+                src: "/dist/aisha/B1.jpg",
                 name: "Women's walking shoes tennis sneakers",
                 price: "$54.99",
               },
               {
-                src: "/public/aisha/6.jpg",
+                src: "/dist/aisha/6.jpg",
                 name: "Classic aviator sunglasses for women",
                 price: "$76.00",
               },

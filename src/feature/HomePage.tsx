@@ -78,7 +78,7 @@ export default function HomePage() {
                 loop
                 playsInline
               >
-                <source src="/public/aisha/aicha.mp4" type="video/mp4" />
+                <source src="/dist/aisha/aicha.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>

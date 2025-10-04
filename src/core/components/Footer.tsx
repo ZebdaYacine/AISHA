@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="bg-base-200 text-base-content px-6 py-10">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center text-center gap-6">
         {/* Centered Logo */}
-        <img src="/aisha/logo.png" alt="Aisha Logo" className="w-42 md:w-42" />
+        <img src="/dist/aisha/logo.png" alt="Aisha Logo" className="w-42 md:w-42" />
 
         {/* Centered Social Icons */}
         <div className="flex flex-col  gap-4 text-2xl">

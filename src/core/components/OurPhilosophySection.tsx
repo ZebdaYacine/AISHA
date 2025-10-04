@@ -21,7 +21,7 @@ export default function OurPhilosophySection() {
         <div className="hidden md:flex md:w-1/2  items-center justify-center ">
           <div className="w-full h-full   overflow-hidden">
             <img
-              src="/aisha/section/slide 2A.jpg"
+              src="/dist/aisha/section/slide 2A.jpg"
               alt="Our Philosophy"
               className="w-full h-full object-cover "
             />

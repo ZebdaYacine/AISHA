@@ -7,6 +7,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { getDatabase } from "firebase/database";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyARLmI8KMdbK7y0NikLNSubdPC4ohwaRss",
@@ -22,5 +23,8 @@ const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-const db = getDatabase(app);
-export { auth, provider, signInWithPopup, signOut, db };
+const realtimeDb = getDatabase(app);
+const firestoreDb = getFirestore(app);
+
+export { app, auth, provider, signInWithPopup, signOut, realtimeDb, firestoreDb };
+export const db = realtimeDb;

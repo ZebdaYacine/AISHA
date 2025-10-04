@@ -5,6 +5,7 @@ import {
   formatDate,
   useOrdersViewModel,
   type OrderStatus,
+  type OrderTab,
 } from "../../viewmodel/OrdersViewModel";
 
 const PAGE_SIZE = 3;

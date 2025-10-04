@@ -63,7 +63,6 @@ export default function LoginPage() {
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
               className="mb-6"
-              isLoginPage={true}
             />
 
             <div className="text-center">

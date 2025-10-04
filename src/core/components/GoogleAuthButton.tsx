@@ -8,7 +8,6 @@ interface GoogleAuthButtonProps {
   onError?: (error: string) => void;
   className?: string;
   children?: React.ReactNode;
-  isLoginPage?: boolean;
 }
 
 export default function GoogleAuthButton({
@@ -16,7 +15,6 @@ export default function GoogleAuthButton({
   onError,
   className = "",
   children = "Continue with Google",
-  isLoginPage = false,
 }: GoogleAuthButtonProps) {
   const [loading, setLoading] = useState(false);
 
@@ -60,7 +58,6 @@ export default function GoogleAuthButton({
         <FcGoogle className="text-2xl" />
       )}
       {children}
-      {/* {isLoginPage ? "login with google account" : children} */}
     </button>
   );
 }

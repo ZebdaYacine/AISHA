@@ -118,14 +118,14 @@ export function useProfileViewModel() {
       await set(ref(db, "users/" + user.uid), profileInfo);
       // Save craftsman request
       if (craftsmanInfo) {
-        let proofValue: string | null | undefined = craftsmanInfo.proof;
-        if (
-          craftsmanInfo.proof &&
-          typeof craftsmanInfo.proof !== "string" &&
-          craftsmanInfo.proof instanceof File
-        ) {
+        let proofValue: string | null = null;
+
+        if (typeof craftsmanInfo.proof === "string") {
+          proofValue = craftsmanInfo.proof;
+        } else if (craftsmanInfo.proof instanceof File) {
           proofValue = await uploadProofFile(craftsmanInfo.proof);
         }
+
         const updatedCraftsmanInfo: CraftsmanInfo = {
           ...craftsmanInfo,
           proof: proofValue ?? null,
