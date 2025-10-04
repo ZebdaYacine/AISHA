@@ -2,7 +2,7 @@ import React, { useContext, useState, useMemo } from "react";
 import useSWR from "swr";
 import { AuthContext } from "../../../../core/state/AuthContext";
 import { db } from "../../../../core/firebase/config";
-import { ref, onValue, remove, update } from "firebase/database";
+import { ref, onValue, remove, update, push, set, serverTimestamp } from "firebase/database";
 import Swal from "sweetalert2";
 
 const MySwal = Swal;
@@ -75,6 +75,8 @@ const CartPage: React.FC = () => {
     return Math.ceil(cartItems.length / itemsPerPage);
   }, [cartItems, itemsPerPage]);
 
+  const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
+
   const handleRemoveItem = async (itemId: string, title: string) => {
     MySwal.fire({
       title: "Are you sure?",
@@ -117,6 +119,106 @@ const CartPage: React.FC = () => {
     } catch (error) {
       console.error("Error updating quantity:", error);
       MySwal.fire("Error", "Failed to update quantity.", "error");
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (!isLoggedIn || !user) {
+      MySwal.fire({
+        icon: "warning",
+        title: "Login Required",
+        text: "You need to be logged in to checkout.",
+      });
+      return;
+    }
+
+    if (!cartItems || cartItems.length === 0) {
+      MySwal.fire({
+        icon: "info",
+        title: "Cart Empty",
+        text: "Add some items to your cart before checking out.",
+      });
+      return;
+    }
+
+    setIsProcessingCheckout(true);
+
+    try {
+      for (const item of cartItems) {
+        let deliveryLocation = "Aicha Office";
+
+        if (item.deliveryOption === "home") {
+          const { value, isDismissed } = await MySwal.fire({
+            title: "Delivery Location",
+            input: "text",
+            inputLabel: `Where should we deliver ${item.title}?`,
+            inputPlaceholder: "Enter delivery address",
+            confirmButtonText: "Confirm",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+          });
+
+          if (isDismissed) {
+            setIsProcessingCheckout(false);
+            return;
+          }
+
+          const trimmed = value?.trim();
+          if (!trimmed) {
+            await MySwal.fire({
+              icon: "warning",
+              title: "Location Required",
+              text: "Please provide a delivery location to continue.",
+            });
+            setIsProcessingCheckout(false);
+            return;
+          }
+
+          deliveryLocation = trimmed;
+        }
+
+        const ordersRef = ref(db, "orders");
+        const newOrderRef = push(ordersRef);
+
+        await set(newOrderRef, {
+          orderId: newOrderRef.key,
+          trackingNumber: newOrderRef.key,
+          userId: user.uid,
+          productId: item.productId,
+          productTitle: item.title,
+          productPrice: item.price,
+          productImage: item.image,
+          quantity: item.quantity,
+          stock: item.quantity,
+          amount: item.totalItemAmount,
+          deliveryOption: item.deliveryOption,
+          deliveryOn: item.deliveryOption,
+          deliveryCost: item.deliveryCost,
+          isPaid: false,
+          status: "to_pay",
+          location: deliveryLocation,
+          createdAt: serverTimestamp(),
+        });
+
+        await remove(ref(db, `carts/${user.uid}/${item.id}`));
+      }
+
+      await mutate();
+
+      MySwal.fire({
+        icon: "success",
+        title: "Order Placed!",
+        html: `<p>Your checkout is complete. ${cartItems.length} item(s) moved to orders.</p>`,
+      });
+    } catch (checkoutError) {
+      console.error("Error during checkout:", checkoutError);
+      MySwal.fire({
+        icon: "error",
+        title: "Checkout Failed",
+        text: "We couldn't process your checkout. Please try again.",
+      });
+    } finally {
+      setIsProcessingCheckout(false);
     }
   };
 
@@ -283,8 +385,16 @@ const CartPage: React.FC = () => {
               <span>{totalCartAmount.toFixed(2)} DZD</span>
             </div>
           </div>
-          <button className="btn btn-primary w-full mt-6">
-            Proceed to Checkout
+          <button
+            className="btn btn-primary w-full mt-6"
+            onClick={handleCheckout}
+            disabled={isProcessingCheckout}
+          >
+            {isProcessingCheckout ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              "Proceed to Checkout"
+            )}
           </button>
         </div>
       </div>

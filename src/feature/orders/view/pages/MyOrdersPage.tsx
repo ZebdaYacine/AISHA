@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   deriveStatus,
   formatCurrency,
   formatDate,
   useOrdersViewModel,
   type OrderStatus,
-  type OrderTab,
 } from "../../viewmodel/OrdersViewModel";
+
+const PAGE_SIZE = 3;
 
 const MyOrdersPage: React.FC = () => {
   const {
@@ -20,6 +21,8 @@ const MyOrdersPage: React.FC = () => {
     searchTerm,
     setSearchTerm,
   } = useOrdersViewModel();
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const ORDER_TABS: Array<{ key: OrderTab; label: string }> = [
     { key: "all", label: "View all" },
@@ -42,6 +45,17 @@ const MyOrdersPage: React.FC = () => {
     shipped: "badge badge-xl badge-accent badge",
     processed: "badge badge-xl badge-success badge",
   };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedTab, searchTerm, filteredOrders.length]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
+
+  const paginatedOrders = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredOrders.slice(start, start + PAGE_SIZE);
+  }, [filteredOrders, currentPage]);
 
   if (!isLoggedIn) {
     return (
@@ -109,7 +123,7 @@ const MyOrdersPage: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          {filteredOrders.map((order) => {
+          {paginatedOrders.map((order) => {
             const status = deriveStatus(order);
             return (
               <div
@@ -180,6 +194,32 @@ const MyOrdersPage: React.FC = () => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {filteredOrders.length > PAGE_SIZE && (
+        <div className="flex justify-center items-center gap-4 pt-4">
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="text-lg">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+            }
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
       )}
     </div>
