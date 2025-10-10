@@ -18,7 +18,7 @@ This project now includes Firebase OAuth authentication with Google sign-in func
 3. Enable Authentication in the Firebase console
 4. Go to Authentication > Sign-in method
 5. Enable Google provider
-6. Add your authorized domains
+6. Add your authorized domains (e.g. your VPS domain) so the popup can open
 
 ### 2. Environment Variables
 Create a `.env` file in your project root with the following variables:
@@ -32,6 +32,14 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ```
+
+> **Note:** When serving the app from a VPS or any non-Firebase hosting, keep
+> `VITE_FIREBASE_AUTH_DOMAIN` pointed to the default
+> `<project-id>.firebaseapp.com`. Your public site domain must still be added to
+> the **Authorized domains** list in Firebase Console, but you do not need to
+> change the auth domain in your code. Pointing the auth domain to a server that
+> is not running Firebase Hosting will cause Google sign-in popups to close with
+> `auth/popup-closed-by-user`.
 
 ### 3. Google OAuth Setup
 1. In Firebase Console, go to Authentication > Sign-in method

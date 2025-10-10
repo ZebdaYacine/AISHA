@@ -8,7 +8,9 @@ import {
 } from "../../../core/hooks/useProfile";
 import type { CraftsmanInfo } from "../data/datasource/ProfileDtos";
 
-const UPLOAD_ENDPOINT = "http://185.209.230.104:8882/upload";
+const UPLOAD_ENDPOINT = import.meta.env.PROD
+  ? import.meta.env.VITE_UPLOAD_ENDPOINT_PROD
+  : import.meta.env.VITE_UPLOAD_ENDPOINT_TEST;
 
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -114,9 +116,6 @@ export function useProfileViewModel() {
   }> => {
     if (!user) return { success: false, message: "User not authenticated" };
     try {
-      // Save user profile data
-      await set(ref(db, "users/" + user.uid), profileInfo);
-      // Save craftsman request
       if (craftsmanInfo) {
         let proofValue: string | null = null;
 
@@ -126,11 +125,13 @@ export function useProfileViewModel() {
           proofValue = await uploadProofFile(craftsmanInfo.proof);
         }
 
+        console.log(craftsmanInfo.status);
+
         const updatedCraftsmanInfo: CraftsmanInfo = {
           ...craftsmanInfo,
           proof: proofValue ?? null,
           userId: user.uid,
-          status: "pending",
+          status: craftsmanInfo.status,
         };
         await set(
           ref(db, "craftsman_requests/" + user.uid),
@@ -138,6 +139,7 @@ export function useProfileViewModel() {
         );
         setCraftsmanInfo(updatedCraftsmanInfo);
       }
+      await set(ref(db, "users/" + user.uid), profileInfo);
       await fetchUserData();
       await fetchCraftsmanData();
       return { success: true, message: "Profile updated successfully!" };

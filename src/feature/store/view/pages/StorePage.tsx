@@ -6,6 +6,7 @@ import { useProfileContext } from "../../../../core/state/profileContext";
 import ModalAddProduct from "../components/ModalAddProduct";
 import ModalUpdateProduct from "../components/ModalUpdateProduct";
 import StoreViewModel, { type Product } from "../../viewmodel/StoreViewModel";
+import WelcomeBanner from "../../../../core/components/WelcomeBanner";
 
 const fetcher = () => StoreViewModel.fetchProducts();
 
@@ -48,15 +49,7 @@ const StorePage: React.FC = () => {
 
   return (
     <div className="mt-32 container mx-auto p-4">
-      {/* ✅ Welcome Section */}
-      <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold">
-          Welcome back, <span className="text-primary">{firstName}</span> 👋
-        </h2>
-        <p className="text-gray-500 mt-2">
-          Discover your personalized store and manage your products with ease.
-        </p>
-      </div>
+      <WelcomeBanner name={firstName} />
       {/* ✅ Store Header */}
       <div className="flex flex-row justify-between  mb-6">
         <button

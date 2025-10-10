@@ -6,10 +6,13 @@ import OurPhilosophySection from "../core/components/OurPhilosophySection";
 import FilterTabs from "../core/components/FilterTabs";
 import ProductCard from "../core/components/ProductCard";
 import { useAuth } from "../core/hooks/useAuth";
+import { useProfileContext } from "../core/state/profileContext";
+import WelcomeBanner from "../core/components/WelcomeBanner";
 import type { Product } from "./store/viewmodel/StoreViewModel";
 
 export default function HomePage() {
   const { user } = useAuth();
+  const { profileInfo } = useProfileContext();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +62,14 @@ export default function HomePage() {
   const ITEMS_PER_PAGE = 16;
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
 
+  const capitalize = (str?: string | null) =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
+
+  const firstName = capitalize(
+    profileInfo?.firstName ??
+      (user?.displayName ? user.displayName.split(" ")[0] : "")
+  );
+
   const paginatedProducts = products.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -66,7 +77,11 @@ export default function HomePage() {
 
   return (
     <>
-      {!user && (
+      {user ? (
+        <div className="mt-40 container mx-auto px-4">
+          <WelcomeBanner name={firstName} />
+        </div>
+      ) : (
         <>
           {/* MAIN CONTENT */}
           <div className=" sm:mt-32 mt-28 flex  flex-col flex-1 justify-center items-center w-full h-screen">

@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { signInWithGoogle } from "../firebase/auth";
+import {
+  signInWithGoogle,
+  handleRedirectResult,
+  type GoogleAuthOutcome,
+} from "../firebase/auth";
 
 interface GoogleAuthButtonProps {
   onSuccess?: (user: any) => void;
@@ -18,26 +22,39 @@ export default function GoogleAuthButton({
 }: GoogleAuthButtonProps) {
   const [loading, setLoading] = useState(false);
 
+  const handleOutcome = (outcome: GoogleAuthOutcome) => {
+    switch (outcome.kind) {
+      case "success":
+        console.log("✅ Google auth success:", outcome.user);
+        onSuccess?.(outcome.user);
+        return;
+      case "error":
+        console.error("❌ Google auth error:", outcome.error);
+        onError?.(outcome.error.message || "Failed to sign in with Google");
+        return;
+      case "redirect":
+        console.log("🔄 Redirect flow started — awaiting Firebase callback");
+        return;
+      case "none":
+        return;
+    }
+  };
+
+  // ✅ Handle redirect login result on mount
+  useEffect(() => {
+    handleRedirectResult().then(handleOutcome).catch((error: any) => {
+      console.error("❌ Redirect handler exception:", error);
+      onError?.(error?.message ?? "Redirect login failed");
+    });
+  }, [onError, onSuccess]);
+
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
       console.log("🔐 GoogleAuthButton: Starting Google sign-in...");
-      const { user, error } = await signInWithGoogle();
-      console.log("🔐 GoogleAuthButton: Result received:", { user, error });
-
-      if (error) {
-        console.error("❌ GoogleAuthButton: Error occurred:", error);
-        onError?.(error.message || "Failed to sign in with Google");
-      } else if (user) {
-        console.log(
-          "✅ GoogleAuthButton: Success, calling onSuccess with user:",
-          user
-        );
-        onSuccess?.(user);
-      } else {
-        console.warn("⚠️ GoogleAuthButton: No user and no error returned");
-        onError?.("Unexpected result from Google sign-in");
-      }
+      const outcome = await signInWithGoogle();
+      console.log("🔐 GoogleAuthButton: Outcome received:", outcome);
+      handleOutcome(outcome);
     } catch (error: any) {
       console.error("❌ GoogleAuthButton: Exception occurred:", error);
       onError?.(error.message || "Failed to sign in with Google");

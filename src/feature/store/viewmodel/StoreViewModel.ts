@@ -1,6 +1,10 @@
 import { ref as databaseRef, push, set, update, get } from "firebase/database";
 import { db } from "../../../core/firebase/config";
 
+const UPLOAD_ENDPOINT = import.meta.env.PROD
+  ? import.meta.env.VITE_UPLOAD_ENDPOINT_PROD
+  : import.meta.env.VITE_UPLOAD_ENDPOINT_TEST;
+
 export interface Product {
   id: string;
   title: string;
@@ -13,7 +17,7 @@ export interface Product {
 
 class StoreViewModel {
   // make it static so it can be used inside static methods
-  private static base_url = "http://185.209.230.104:8882/upload";
+  private static base_url = UPLOAD_ENDPOINT;
 
   static fetchProducts = (): Promise<Product[]> => {
     return new Promise((resolve, reject) => {

@@ -13,6 +13,7 @@ import MyOrdersPage from "./feature/orders/view/pages/MyOrdersPage";
 import { ProfileProvider } from "./core/state/profileContext";
 import { CraftsProvider } from "./core/state/craftsContext";
 import ThemeToggle from "./core/components/ThemeToggle";
+import UnderDevelopment from "./core/components/UnderDevelopment";
 
 export default function App() {
   return (
@@ -22,11 +23,9 @@ export default function App() {
           <BrowserRouter>
             <div className="min-h-screen bg-base-100 flex flex-col ">
               <Navbar />
-              {/* Floating Theme Toggle */}
               <div className="hidden md:flex fixed bottom-6 right-6 p-3 rounded-full shadow-lg bg-primary text-white z-50">
                 <ThemeToggle />
               </div>
-
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/register" element={<RegisterPage />} />
@@ -36,7 +35,12 @@ export default function App() {
                 <Route path="/product/:id" element={<ProductDetailsPage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/orders" element={<MyOrdersPage />} />
-                {/* Add CartPage route */}
+                <Route path="/new" element={<UnderDevelopment />} />
+                <Route path="/artisan" element={<UnderDevelopment />} />
+                <Route path="/category" element={<UnderDevelopment />} />
+                <Route path="/custom" element={<UnderDevelopment />} />
+                <Route path="/collections" element={<UnderDevelopment />} />
+                <Route path="/mission" element={<UnderDevelopment />} />
               </Routes>
               <div className="divider divide-x-2"></div>
               <Footer />

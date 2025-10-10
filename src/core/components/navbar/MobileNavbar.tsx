@@ -3,7 +3,7 @@ import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { ShoppingBasket } from "lucide-react";
 import { CiSearch } from "react-icons/ci";
 import { IoStorefrontOutline } from "react-icons/io5";
-import { MdOutlineFavoriteBorder, MdOutlineShoppingCart } from "react-icons/md";
+import { MdOutlineShoppingCart } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useCraftsContext } from "../../hooks/useProfile";
@@ -159,15 +159,7 @@ export default function MobileNavbar({
                   </button>
                 </li>
               )}
-              <li>
-                <button
-                  className="btn btn-ghost justify-start"
-                  onClick={closeDrawer}
-                >
-                  <MdOutlineFavoriteBorder className="w-6 h-6 mr-2" />
-                  Favorites
-                </button>
-              </li>
+
               <li>
                 <button
                   className="btn btn-ghost justify-start"
@@ -177,7 +169,7 @@ export default function MobileNavbar({
                   }}
                 >
                   <MdOutlineShoppingCart className="w-6 h-6 mr-2" />
-                  Cart
+                  My Cart
                 </button>
               </li>
               <li>
@@ -190,15 +182,6 @@ export default function MobileNavbar({
                 >
                   <FiList className="w-6 h-6 mr-2" />
                   My Orders
-                </button>
-              </li>
-              <li>
-                <button
-                  className="btn btn-error justify-start text-base-100"
-                  onClick={() => void handleLogout()}
-                >
-                  <FiLogOut className="w-6 h-6 mr-2" />
-                  Logout
                 </button>
               </li>
             </>
@@ -220,6 +203,15 @@ export default function MobileNavbar({
               </button>
             </li>
           ))}
+          <li>
+            <button
+              className="btn btn-error justify-start text-base-100"
+              onClick={() => void handleLogout()}
+            >
+              <FiLogOut className="w-6 h-6 mr-2" />
+              Logout
+            </button>
+          </li>
         </ul>
       </div>
     </div>

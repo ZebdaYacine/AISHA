@@ -14,7 +14,7 @@ export default function RegisterPage() {
     console.log("✅ Google Sign-in successful:", user);
     setError("");
     login(user);
-    navigate("/profile");
+    navigate("/");
   };
 
   const handleGoogleError = (errorMessage: string) => {

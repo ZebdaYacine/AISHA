@@ -1,41 +1,37 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
 import { AuthContext } from "../../state/AuthContext";
 import { db } from "../../firebase/config";
 import { ref, onValue } from "firebase/database";
-import useSWR from "swr";
-
-
-const fetchCartItemsCount = (userId: string | undefined) => async () => {
-  if (!userId) return 0;
-
-  const cartRef = ref(db, `carts/${userId}`);
-  return new Promise<number>((resolve) => {
-    onValue(
-      cartRef,
-      (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          resolve(Object.keys(data).length);
-        } else {
-          resolve(0);
-        }
-      },
-      (error) => {
-        console.error("Error fetching cart items count:", error);
-        resolve(0); // Resolve with 0 on error
-      }
-    );
-  });
-};
 
 export default function Navbar() {
   const { user, isLoggedIn } = useContext(AuthContext)!;
-  const { data: cartItemCount = 0 } = useSWR(
-    isLoggedIn ? `cartsCount/${user?.uid}` : null,
-    fetchCartItemsCount(user?.uid)
-  );
+  const [cartItemCount, setCartItemCount] = useState(0);
+
+  useEffect(() => {
+    if (!isLoggedIn || !user?.uid) {
+      setCartItemCount(0);
+      return;
+    }
+
+    const cartRef = ref(db, `carts/${user.uid}`);
+    const unsubscribe = onValue(
+      cartRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        setCartItemCount(data ? Object.keys(data).length : 0);
+      },
+      (error) => {
+        console.error("Error fetching cart items count:", error);
+        setCartItemCount(0);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [isLoggedIn, user?.uid]);
 
   const craftItems = [
     { label: "New In", path: "/new" },
