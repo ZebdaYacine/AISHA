@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import { db } from "../firebase/config";
 import { ref, push, set, update } from "firebase/database"; // Added update
 import Swal from "sweetalert2";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const MySwal = Swal;
 
@@ -23,6 +24,8 @@ const ModalBuyProduct: React.FC<ModalBuyProductProps> = ({
   onClose,
 }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [quantity, setQuantity] = useState(1);
   const [deliveryOption, setDeliveryOption] = useState("office"); // 'office' or 'home'
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,11 +37,17 @@ const ModalBuyProduct: React.FC<ModalBuyProductProps> = ({
 
   const handlePurchase = async () => {
     if (!user) {
-      MySwal.fire({
-        icon: "error",
-        title: "Authentication Required",
-        text: "You must be logged in to purchase a product.",
+      await MySwal.fire({
+        icon: "warning",
+        title: "Login Required",
+        text: "Please sign in to purchase a product.",
+        confirmButtonText: "Go to Login",
       });
+      if (onClose) {
+        onClose();
+      }
+      (document.getElementById(id) as HTMLDialogElement)?.close();
+      navigate("/login", { state: { from: location.pathname } });
       return;
     }
     if (quantity > product.stock) {

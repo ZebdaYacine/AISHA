@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import useSWR from "swr";
 import StoreViewModel from "../../viewmodel/StoreViewModel";
 import ImageZoom from "../../../../core/components/ImageZoom";
@@ -20,6 +20,8 @@ const ProductDetailsPage: React.FC = () => {
     id ? StoreViewModel.fetchProductById(id) : null
   );
   const { user, isLoggedIn } = useContext(AuthContext)!;
+  const navigate = useNavigate();
+  const location = useLocation();
   const [quantity, setQuantity] = useState(1);
   const [deliveryOption, setDeliveryOption] = useState("office"); // 'office' or 'home'
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -28,13 +30,21 @@ const ProductDetailsPage: React.FC = () => {
   const deliveryCost = deliveryOption === "home" ? 1000 : 0;
   const totalAmount = product ? product.price * quantity + deliveryCost : 0;
 
+  const redirectToLogin = async (message: string) => {
+    await MySwal.fire({
+      icon: "warning",
+      title: "Login Required",
+      text: message,
+      confirmButtonText: "Go to Login",
+    });
+    navigate("/login", { state: { from: location.pathname } });
+  };
+
   const handleAddToCart = async () => {
     if (!isLoggedIn || !user) {
-      MySwal.fire({
-        icon: "warning",
-        title: "Login Required",
-        text: "You need to be logged in to add products to your cart.",
-      });
+      await redirectToLogin(
+        "You need to be logged in to add products to your cart."
+      );
       return;
     }
 
@@ -72,11 +82,7 @@ const ProductDetailsPage: React.FC = () => {
 
   const handleBuyNow = async () => {
     if (!isLoggedIn || !user) {
-      MySwal.fire({
-        icon: "warning",
-        title: "Login Required",
-        text: "You need to be logged in to buy products.",
-      });
+      await redirectToLogin("You need to be logged in to buy products.");
       return;
     }
 

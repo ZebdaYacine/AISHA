@@ -1,7 +1,8 @@
 import { useState, memo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ModalBuyProduct from "./ModalBuyProduct";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { useAuth } from "../hooks/useAuth";
 
 interface ProductCardProps {
   id: string;
@@ -40,7 +41,15 @@ const ProductCard: React.FC<ProductCardProps> = memo(
 
     const [isFavoriteRef, setisFav] = useState(isFavorite);
 
+    const { isLoggedIn } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const handleBuyClick = () => {
+      if (!isLoggedIn) {
+        navigate("/login", { state: { from: location.pathname } });
+        return;
+      }
       (document.getElementById(modalId) as HTMLDialogElement)?.showModal();
       if (onBuy) {
         onBuy();
@@ -56,8 +65,6 @@ const ProductCard: React.FC<ProductCardProps> = memo(
       }, 1000);
       setisFav(!isFavoriteRef);
     };
-
-    const navigate = useNavigate();
 
     return (
       <>
