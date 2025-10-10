@@ -25,6 +25,11 @@ export default function DesktopNavbar({
     location.pathname === "/login" || location.pathname === "/register";
   const isHome = location.pathname === "/";
 
+  const isCraftsmanApproved =
+    isLoggedIn &&
+    typeof craftsmanInfo?.status === "string" &&
+    ["accepted", "approved"].includes(craftsmanInfo.status.toLowerCase());
+
   const handleLogout = async () => {
     const { error } = await signOutUser();
     if (error) {
@@ -91,7 +96,7 @@ export default function DesktopNavbar({
               </div>
             )}
 
-            {craftsmanInfo?.status === "accepted" && isLoggedIn && (
+            {isCraftsmanApproved && (
               <div className="w-10 h-10 flex items-center justify-center">
                 <HiOutlineBuildingStorefront
                   onClick={() => navigate("/my-store")}

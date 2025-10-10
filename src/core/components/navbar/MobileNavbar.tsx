@@ -24,6 +24,10 @@ export default function MobileNavbar({
   const location = useLocation();
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
+  const isCraftsmanApproved =
+    isLoggedIn &&
+    typeof craftsmanInfo?.status === "string" &&
+    ["accepted", "approved"].includes(craftsmanInfo.status.toLowerCase());
 
   const closeDrawer = () => {
     const drawer = document.getElementById(
@@ -105,7 +109,7 @@ export default function MobileNavbar({
                 </div>
               )}
 
-              {craftsmanInfo?.status === "accepted" && (
+              {isCraftsmanApproved && (
                 <IoStorefrontOutline
                   onClick={() => navigate("/my-store")}
                   className=" w-6 h-6 mr-2 cursor-pointer animate-pulse "
@@ -145,7 +149,7 @@ export default function MobileNavbar({
         <ul className="menu p-4 w-60 min-h-full bg-base-100 text-base-content gap-4">
           {isLoggedIn && (
             <>
-              {craftsmanInfo?.status === "accepted" && (
+              {isCraftsmanApproved && (
                 <li className="animate-pulse">
                   <button
                     onClick={() => {

@@ -4,9 +4,12 @@ import MobileNavbar from "./MobileNavbar";
 import { AuthContext } from "../../state/AuthContext";
 import { db } from "../../firebase/config";
 import { ref, onValue } from "firebase/database";
+import { useCraftsContext } from "../../hooks/useProfile";
+import { getCraftsmanInfo } from "../../firebase/auth";
 
 export default function Navbar() {
   const { user, isLoggedIn } = useContext(AuthContext)!;
+  const { setCraftsmanInfo } = useCraftsContext();
   const [cartItemCount, setCartItemCount] = useState(0);
 
   useEffect(() => {
@@ -32,6 +35,33 @@ export default function Navbar() {
       unsubscribe();
     };
   }, [isLoggedIn, user?.uid]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !user?.uid) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    const fetchCraftsmanData = async () => {
+      try {
+        const data = await getCraftsmanInfo(user.uid);
+        if (!isCancelled) {
+          setCraftsmanInfo(data ?? null);
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          console.error("Error loading craftsman info:", error);
+        }
+      }
+    };
+
+    fetchCraftsmanData();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [isLoggedIn, setCraftsmanInfo, user?.uid]);
 
   const craftItems = [
     { label: "New In", path: "/new" },

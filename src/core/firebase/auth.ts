@@ -11,6 +11,7 @@ import {
 } from "firebase/auth";
 import { auth, db, provider } from "./config";
 import { child, get, ref, set } from "firebase/database";
+import type { CraftsmanInfo } from "../../feature/profile/data/datasource/ProfileDtos";
 
 // Configure Google provider
 provider.addScope("profile");
@@ -40,6 +41,19 @@ export const saveUserToDB = async (user: any) => {
     console.log("✅ User saved to Realtime Database");
   } catch (error) {
     console.error("❌ Error saving user:", error);
+  }
+};
+
+export const getCraftsmanInfo = async (
+  uid: string
+): Promise<CraftsmanInfo | null> => {
+  try {
+    const dbRef = ref(db);
+    const snapshot = await get(child(dbRef, `craftsman_requests/${uid}`));
+    return snapshot.exists() ? (snapshot.val() as CraftsmanInfo) : null;
+  } catch (error) {
+    console.error("❌ Error fetching craftsman info:", error);
+    return null;
   }
 };
 

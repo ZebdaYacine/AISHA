@@ -3,19 +3,34 @@ import { useNavigate } from "react-router-dom";
 import FloatingList from "../core/components/FloatingImageList";
 import { useState } from "react";
 import { useAuth } from "../core/hooks/useAuth";
+import { useCraftsContext } from "../core/hooks/useProfile";
 import GoogleAuthButton from "../core/components/GoogleAuthButton";
+import { getCraftsmanInfo } from "../core/firebase/auth";
 import { FaUserCheck, FaArrowRight } from "react-icons/fa";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { setCraftsmanInfo } = useCraftsContext();
   const [error, setError] = useState("");
 
   const handleGoogleSuccess = (user: any) => {
     console.log("✅ Google Sign-in successful:", user);
     setError("");
     login(user);
-    navigate("/");
+
+    (async () => {
+      try {
+        const craftsmanData = await getCraftsmanInfo(user.uid);
+        console.log(craftsmanData);
+        setCraftsmanInfo(craftsmanData ?? null);
+      } catch (craftsmanError) {
+        console.error("❌ Failed to load craftsman info:", craftsmanError);
+        setCraftsmanInfo(null);
+      } finally {
+        navigate("/");
+      }
+    })();
   };
 
   const handleGoogleError = (errorMessage: string) => {

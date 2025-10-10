@@ -21,20 +21,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing user session
     const currentUser = getCurrentUser();
     if (currentUser) {
       setUser(currentUser);
     }
 
-    // Listen for auth state changes
     const unsubscribe = onAuthStateChange((user) => {
       setUser(user);
       setIsLoggedIn(!!user);
       setLoading(false);
     });
 
-    // Cleanup subscription
     return () => unsubscribe();
   }, []);
 
