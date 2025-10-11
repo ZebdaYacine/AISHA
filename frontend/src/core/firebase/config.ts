@@ -13,7 +13,6 @@ const firebaseConfig = {
   apiKey: "AIzaSyARLmI8KMdbK7y0NikLNSubdPC4ohwaRss",
   authDomain: "aisha-3c536.firebaseapp.com",
   // authDomain: "aisha.3utilities.com", // ✅ use your custom domain
-
   projectId: "aisha-3c536",
   storageBucket: "aisha-3c536.appspot.com",
   messagingSenderId: "727872088596",

@@ -1,0 +1,16 @@
+root = "."
+tmp_dir = ".air"
+
+[build]
+  cmd = "GOCACHE=.gocache go build -o .air/main ./cmd"
+  bin = ".air/main"
+  include_ext = ["go", "mod", "sum"]
+  exclude_regex = ["_test\\.go"]
+  exclude_dir = [".air", "vendor", "frontend", "node_modules"]
+
+[log]
+  time = true
+
+[watch]
+  include_dir = ["api", "cmd", "core", "ent", "feature", "pkg", "util"]
+  exclude_dir = [".air", ".git", "vendor", "frontend", "node_modules"]

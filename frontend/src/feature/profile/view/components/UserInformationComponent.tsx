@@ -1,7 +1,7 @@
 import { FaUser, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
 import InputWithIcon from "../../../../core/components/InputWithIcon";
 import { useProfileContext } from "../../../../core/hooks/useProfile";
-import type { ProfileInfo } from "../../../../feature/profile/data/datasource/ProfileDtos";
+import type { ProfileInfo } from "../../data/datasource/ProfileDtos";
 
 export default function UserInformationComponent() {
   const { profileInfo, setProfileInfo } = useProfileContext();
