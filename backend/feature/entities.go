@@ -2,8 +2,6 @@ package feature
 
 type User struct {
 	ID           string `json:"id"`
-	Provider     string `json:"provider"`
-	ProviderID   string `json:"providerId"`
 	Email        string `json:"email"`
 	Name         string `json:"name"`
 	Picture      string `json:"picture"`

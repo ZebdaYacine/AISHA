@@ -70,11 +70,7 @@ func (r *entRepository) UpsertOAuthUser(ctx context.Context, user *entities.OAut
 		SetUpdatedAt(current).
 		SetNillableEmail(optionalString(user.Email)).
 		SetNillableName(optionalString(user.Name)).
-		SetNillablePicture(optionalString(user.Picture)).
-		SetNillableAccessToken(optionalString(user.AccessToken)).
-		SetNillableRefreshToken(optionalString(user.RefreshToken)).
-		SetNillableTokenType(optionalString(user.TokenType)).
-		SetNillableExpiresAt(optionalTime(user.ExpiresAt))
+		SetNillablePicture(optionalString(user.Picture))
 
 	if user.ID != "" {
 		uid, err := uuid.Parse(user.ID)
@@ -109,12 +105,9 @@ func (r *entRepository) GetUserByID(ctx context.Context, id string) (*entities.O
 
 func mapToDomain(u *ent.User) *entities.OAuthUser {
 	var (
-		email        string
-		name         string
-		picture      string
-		accessToken  string
-		refreshToken string
-		tokenType    string
+		email   string
+		name    string
+		picture string
 	)
 
 	if u.Email != nil {
@@ -126,28 +119,15 @@ func mapToDomain(u *ent.User) *entities.OAuthUser {
 	if u.Picture != nil {
 		picture = *u.Picture
 	}
-	if u.AccessToken != nil {
-		accessToken = *u.AccessToken
-	}
-	if u.RefreshToken != nil {
-		refreshToken = *u.RefreshToken
-	}
-	if u.TokenType != nil {
-		tokenType = *u.TokenType
-	}
 
 	return &entities.OAuthUser{
-		ID:           u.ID.String(),
-		Provider:     u.Provider,
-		ProviderID:   u.ProviderID,
-		Email:        email,
-		Name:         name,
-		Picture:      picture,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		TokenType:    tokenType,
-		ExpiresAt:    valueOrZero(u.ExpiresAt),
-		Role:         u.Role,
+		ID:         u.ID.String(),
+		ProviderID: u.ProviderID,
+		Email:      email,
+		Name:       name,
+		Picture:    picture,
+		ExpiresAt:  valueOrZero(u.ExpiresAt),
+		Role:       u.Role,
 	}
 }
 
