@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FiUser, FiHome, FiLogOut, FiList } from "react-icons/fi";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { ShoppingBasket } from "lucide-react";
@@ -9,15 +10,31 @@ import { useAuth } from "../../hooks/useAuth";
 import { useCraftsContext } from "../../hooks/useProfile";
 import ThemeToggle from "../ThemeToggle";
 
+interface NavSubItem {
+  label: string;
+  path: string;
+  submenu?: { label: string; path: string }[];
+}
+
+interface NavItem {
+  label: string;
+  path: string;
+  menu?: NavSubItem[];
+}
+
 interface MobileNavbarProps {
   cartItemCount: number;
-  craftItems: { label: string; path: string }[];
+  craftItems: NavItem[];
 }
 
 export default function MobileNavbar({
   cartItemCount,
   craftItems,
 }: MobileNavbarProps) {
+  const [openMenu, setOpenMenu] = useState<number | null>(null);
+  const [openSubMenus, setOpenSubMenus] = useState<Record<number, number | null>>(
+    {}
+  );
   const { isLoggedIn, user, logout, signOutUser } = useAuth();
   const { craftsmanInfo, setCraftsmanInfo } = useCraftsContext();
   const navigate = useNavigate();
@@ -36,6 +53,8 @@ export default function MobileNavbar({
     if (drawer) {
       drawer.checked = false;
     }
+    setOpenMenu(null);
+    setOpenSubMenus({});
   };
 
   const handleLogout = async () => {
@@ -197,14 +216,83 @@ export default function MobileNavbar({
           </li>
 
           <li className="font-bold text-base mt-4">Crafts</li>
-          {craftItems.map((item) => (
-            <li key={item.label}>
+          {craftItems.map((item, idx) => (
+            <li key={item.label} className="relative">
               <button
-                className="btn btn-ghost justify-start text-sm"
-                onClick={() => navigate(item.path)}
+                type="button"
+                className="btn btn-ghost justify-between text-sm w-full"
+                onClick={() => {
+                  const isOpen = openMenu === idx;
+                  if (isOpen) {
+                    setOpenMenu(null);
+                    setOpenSubMenus((prev) => ({ ...prev, [idx]: null }));
+                  } else {
+                    setOpenMenu(idx);
+                    setOpenSubMenus({ [idx]: null });
+                  }
+                }}
               >
-                {item.label}
+                <span>{item.label}</span>
+                {item.menu && (
+                  <span className="text-lg leading-none">
+                    {openMenu === idx ? "-" : "+"}
+                  </span>
+                )}
               </button>
+
+              {item.menu && openMenu === idx && (
+                <ul className="mt-2 bg-white shadow-md rounded-lg p-3 space-y-1 animate-fade-in">
+                  {item.menu.map((sub, subIdx) => {
+                    const isSubOpen = openSubMenus[idx] === subIdx;
+                    return (
+                      <li key={sub.label} className="relative">
+                        <button
+                          type="button"
+                          className="flex items-center justify-between w-full text-left px-3 py-1 text-sm hover:text-[#a86c3c] transition-colors"
+                          onClick={() => {
+                            if (sub.submenu) {
+                              setOpenSubMenus((prev) => ({
+                                ...prev,
+                                [idx]:
+                                  prev[idx] === subIdx ? null : subIdx,
+                              }));
+                              return;
+                            }
+                            navigate(sub.path);
+                            closeDrawer();
+                          }}
+                        >
+                          <span>{sub.label}</span>
+                          {sub.submenu && (
+                            <span className="text-base leading-none">
+                              {isSubOpen ? "-" : "+"}
+                            </span>
+                          )}
+                        </button>
+
+                        {sub.submenu && isSubOpen && (
+                          <ul className="mt-1 ml-3 border-l border-base-200 pl-3 space-y-1">
+                            {sub.submenu.map((deep) => (
+                              <li key={deep.label}>
+                                <button
+                                  type="button"
+                                  className="block w-full text-left px-3 py-1 text-sm hover:text-[#a86c3c] transition-colors"
+                                  onClick={() => {
+                                    navigate(deep.path);
+                                    closeDrawer();
+                                  }}
+                                >
+                                  {deep.label}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </li>
           ))}
           <li>

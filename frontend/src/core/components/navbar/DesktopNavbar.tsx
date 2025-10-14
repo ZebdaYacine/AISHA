@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FiUser, FiHome } from "react-icons/fi";
 import { CiSearch } from "react-icons/ci";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -8,15 +9,28 @@ import { HiOutlineShoppingCart } from "react-icons/hi";
 import { HiOutlineBuildingStorefront } from "react-icons/hi2";
 import ProfileMenu from "./ProfileMenu";
 
+interface NavSubItem {
+  label: string;
+  path: string;
+  submenu?: { label: string; path: string }[];
+}
+
+interface NavItem {
+  label: string;
+  path: string;
+  menu?: NavSubItem[];
+}
+
 interface DesktopNavbarProps {
   cartItemCount: number;
-  craftItems: { label: string; path: string }[];
+  craftItems: NavItem[];
 }
 
 export default function DesktopNavbar({
   cartItemCount,
   craftItems,
 }: DesktopNavbarProps) {
+  const [openMenu, setOpenMenu] = useState<number | null>(null);
   const { isLoggedIn, user, logout, signOutUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -76,7 +90,7 @@ export default function DesktopNavbar({
   };
 
   return (
-    <div className="hidden lg:flex navbar fixed top-0 z-40 bg-base-100 px-4 shadow-xl w-full flex-col items-center">
+    <div className=" hidden lg:flex navbar fixed top-0 z-40 bg-base-100 px-4 shadow-xl w-full flex-col items-center">
       <div className="w-full flex justify-between items-center py-2">
         <div className="flex flex-row w-full items-center">
           <div className="flex gap-2 items-center">
@@ -127,16 +141,61 @@ export default function DesktopNavbar({
       </div>
 
       {/* Crafts menu */}
-      <div className="flex w-full justify-center mt-4">
-        <ul className="flex gap-6 text-lg  font-inter font-medium text-gray-700 w-3/4 justify-center">
-          {craftItems.map((item) => (
+      <div className="flex w-full justify-center mt-4 ">
+        <ul className="flex gap-6 text-lg font-inter font-medium text-gray-700 w-3/4 justify-center">
+          {craftItems.map((item, idx) => (
             <li
               key={item.label}
-              onClick={() => navigate(item.path)}
-              className="relative cursor-pointer hover:text-primary transition-all duration-200"
+              className="relative"
+              onMouseEnter={() => setOpenMenu(idx)}
+              onMouseLeave={() => setOpenMenu(null)}
             >
-              <span>{item.label}</span>
-              <span className="block h-0.5 w-0 bg-primary transition-all duration-300 hover:w-full"></span>
+              <button
+                type="button"
+                onClick={() => navigate(item.path)}
+                className="flex flex-col items-start text-left cursor-pointer hover:text-primary transition-colors duration-200 group"
+              >
+                <span>{item.label}</span>
+                <span className="block h-0.5 w-0 bg-primary transition-all duration-300 group-hover:w-full"></span>
+              </button>
+
+              {item.menu && openMenu === idx && (
+                <ul className="absolute left-0 mt-2 bg-white shadow-md rounded-lg p-3 space-y-1 animate-fade-in min-w-[260px]">
+                  {item.menu.map((sub) => (
+                    <li key={sub.label} className="relative group">
+                      <a
+                        href={sub.path}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          navigate(sub.path);
+                        }}
+                        className="block px-3 py-1 text-sm hover:text-[#a86c3c]"
+                      >
+                        {sub.label}
+                      </a>
+
+                      {sub.submenu && (
+                        <ul className="absolute left-full top-0 bg-white shadow-md rounded-lg p-3 hidden group-hover:block space-y-1 min-w-[260px]">
+                          {sub.submenu.map((deep) => (
+                            <li key={deep.label}>
+                              <a
+                                href={deep.path}
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  navigate(deep.path);
+                                }}
+                                className="block px-3 py-1 text-sm hover:text-[#a86c3c]"
+                              >
+                                {deep.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))}
         </ul>

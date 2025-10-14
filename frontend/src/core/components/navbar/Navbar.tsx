@@ -6,6 +6,7 @@ import { db } from "../../firebase/config";
 import { ref, onValue } from "firebase/database";
 import { useCraftsContext } from "../../hooks/useProfile";
 import { getCraftsmanInfo } from "../../firebase/auth";
+import { craftItems } from "./craftItems";
 
 export default function Navbar() {
   const { user, isLoggedIn } = useContext(AuthContext)!;
@@ -63,14 +64,14 @@ export default function Navbar() {
     };
   }, [isLoggedIn, setCraftsmanInfo, user?.uid]);
 
-  const craftItems = [
-    { label: "New In", path: "/new" },
-    { label: "Shop by Category", path: "/category" },
-    { label: "Shop by Artisan", path: "/artisan" },
-    { label: "Custom Orders", path: "/custom" },
-    { label: "Collections", path: "/collections" },
-    { label: "Our Mission", path: "/mission" },
-  ];
+  // const craftItems = [
+  //   { label: "New In", path: "/new" },
+  //   { label: "Shop by Category", path: "/category" },
+  //   { label: "Shop by Artisan", path: "/artisan" },
+  //   { label: "Custom Orders", path: "/custom" },
+  //   { label: "Collections", path: "/collections" },
+  //   { label: "Our Mission", path: "/mission" },
+  // ];
 
   return (
     <>
