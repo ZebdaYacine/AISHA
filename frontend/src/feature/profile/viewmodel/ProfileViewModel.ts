@@ -131,7 +131,8 @@ export function useProfileViewModel() {
           ...craftsmanInfo,
           proof: proofValue ?? null,
           userId: user.uid,
-          status: craftsmanInfo.status,
+          // status: craftsmanInfo.status,
+          status: "pending",
         };
         await set(
           ref(db, "craftsman_requests/" + user.uid),

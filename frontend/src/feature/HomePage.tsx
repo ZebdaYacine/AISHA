@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import { db } from "../core/firebase/config";
 import { ref, onValue } from "firebase/database";
-import SlideSection from "../core/components/SlideSection";
-import OurPhilosophySection from "../core/components/OurPhilosophySection";
+// import SlideSection from "../core/components/SlideSection";
+// import OurPhilosophySection from "../core/components/OurPhilosophySection";
 import FilterTabs from "../core/components/FilterTabs";
 import ProductCard from "../core/components/ProductCard";
 import { useAuth } from "../core/hooks/useAuth";
 import { useProfileContext } from "../core/state/profileContext";
 import WelcomeBanner from "../core/components/WelcomeBanner";
 import type { Product } from "./store/viewmodel/StoreViewModel";
+// import SlideSection from "../core/components/SlideSection";
+import OurPhilosophySection from "../core/components/OurPhilosophySection";
+import ExploreSection from "../core/components/ExploreSection";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -60,7 +63,7 @@ export default function HomePage() {
   }, []);
 
   const ITEMS_PER_PAGE = 16;
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  // const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
 
   const capitalize = (str?: string | null) =>
     str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
@@ -84,35 +87,33 @@ export default function HomePage() {
       ) : (
         <>
           {/* MAIN CONTENT */}
-          <div className=" sm:mt-32 mt-28 flex  flex-col flex-1 justify-center items-center w-full h-screen">
-            {/* 1/3 - Video Section */}
+          <div className=" sm:mt-28 mt-28 flex  flex-col flex-1 justify-center items-center w-full h-screen">
             <div className="h-1/3 w-full">
               <video
                 className="w-full h-full object-cover"
                 autoPlay
                 loop
                 playsInline
+                muted
               >
                 <source src="/dist/aisha/aicha.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
-
-            {/* 1/3 - Cards Section */}
-            <SlideSection />
-            <OurPhilosophySection />
+            {/* <HeroSlideshow /> */}
+            {/* <SlideSection /> */}
+            {/* <OurPhilosophySection /> */}
           </div>
 
-          <p className="text-center text-4xl font-bold mt-20 mb-10">
+          <h2 className="text-center text-4xl font-bold mt-20 mb-10">
             This week's highlights
-          </p>
+          </h2>
         </>
       )}
 
       <FilterTabs />
 
-      <div className="mt-20 w-3/4 mx-auto ">
-        {/* Grid */}
+      {/* <div className="mt-20 w-3/4 mx-auto ">
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <span className="loading loading-spinner loading-lg"></span>
@@ -139,7 +140,6 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Pagination */}
         <div className="flex justify-center mt-8 gap-2 flex-wrap">
           <button
             className="btn btn-sm"
@@ -169,7 +169,68 @@ export default function HomePage() {
             Next
           </button>
         </div>
+      </div> */}
+
+      <div className="mt-20 w-3/4 mx-auto ">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500">{error}</div>
+        ) : (
+          <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {paginatedProducts.slice(0, 8).map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                image={`${product.image}`}
+                title={product.title}
+                description={product.description}
+                price={product.price}
+                stock={product.stock}
+                onMore={() => handleToggleMore(product.id)}
+                toggelMore={expandedProducts.includes(product.id)}
+                onBuy={() => console.log(`Buy ${product.title}`)}
+                isClient={true}
+              />
+            ))}
+          </div>
+        )}
       </div>
+
+      <div className="mt-5 flex  flex-col flex-1 justify-center items-center w-full h-screen">
+        <OurPhilosophySection />
+      </div>
+
+      <div className="mt-20 w-3/4 mx-auto ">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500">{error}</div>
+        ) : (
+          <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {paginatedProducts.slice(8, 12).map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                image={`${product.image}`}
+                title={product.title}
+                description={product.description}
+                price={product.price}
+                stock={product.stock}
+                onMore={() => handleToggleMore(product.id)}
+                toggelMore={expandedProducts.includes(product.id)}
+                onBuy={() => console.log(`Buy ${product.title}`)}
+                isClient={true}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      <ExploreSection />
     </>
   );
 }

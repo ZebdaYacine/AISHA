@@ -69,7 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(
     return (
       <>
         <div
-          className="card bg-white shadow-md w-full flex flex-col border 
+          className="card  shadow-md w-full flex flex-col border 
                    cursor-pointer hover:shadow-xl transition-all duration-300 
                    transform hover:scale-105 rounded-2xl overflow-hidden"
           onDoubleClick={() => {
@@ -114,15 +114,13 @@ const ProductCard: React.FC<ProductCardProps> = memo(
           </div>
           {/* Content */}
           <div className="card-body p-4 space-y-3">
-            <h2 className="card-title text-xl font-bold text-gray-800">
-              {title}
-            </h2>
+            <h2 className="card-title text-xl font-bold ">{title}</h2>
 
             {/* Short description only */}
             {toggelMore ? (
-              <p className="text-gray-600">{description}</p>
+              <p className="text-gray-500">{description}</p>
             ) : (
-              <p className="text-gray-600 line-clamp-2">
+              <p className="text-gray-500 line-clamp-2">
                 {description.slice(0, 100)} .....
               </p>
             )}
@@ -138,10 +136,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(
             {/* Price, stock & actions */}
             <div className="flex justify-between items-center pt-2 border-t border-gray-200">
               <div>
-                <p className="text-xl font-semibold text-gray-800">
-                  {price} DZD
-                </p>
-                <p className="text-lg text-gray-500">Stock: {stock} peices</p>
+                <p className="text-xl font-semibold ">{price} €</p>
+                <p className="text-lg ">Stock: {stock} peices</p>
               </div>
               {isClient ? (
                 <button

@@ -165,7 +165,7 @@ export default function MobileNavbar({
       {/* Drawer Menu */}
       <div className="drawer-side">
         <label htmlFor="mobile-drawer" className="drawer-overlay"></label>
-        <ul className="menu p-4 w-60 min-h-full bg-base-100 text-base-content gap-4">
+        <ul className="menu p-4 w-60 min-h-full bg-base-100 text-base-content gap-4 font-canela">
           {isLoggedIn && (
             <>
               {isCraftsmanApproved && (

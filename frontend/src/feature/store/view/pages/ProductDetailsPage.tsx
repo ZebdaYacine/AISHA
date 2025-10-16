@@ -148,9 +148,11 @@ const ProductDetailsPage: React.FC = () => {
       MySwal.fire({
         icon: "success",
         title: "Order Created!",
-        html: `<p>Your order for ${quantity} × ${product?.title} is confirmed.</p>
-               <p>Total amount: ${totalAmount.toFixed(2)} DZD</p>
-               <p>Delivery cost: ${deliveryCost.toFixed(2)} DZD</p>
+        html: `<p>Your order for ${quantity} × ${
+          product?.title
+        } is confirmed.</p>
+               <p>Total amount: ${totalAmount.toFixed(2)} €</p>
+               <p>Delivery cost: ${deliveryCost.toFixed(2)} €</p>
                <p>Delivery: ${
                  deliveryOption === "home" ? "Home Delivery" : "Office Pickup"
                }</p>
@@ -196,7 +198,7 @@ const ProductDetailsPage: React.FC = () => {
           <h1 className="text-3xl font-bold">{product.title}</h1>
           <p className="text-xl text-gray-600">{product.description}</p>
           <p className="text-2xl font-semibold text-primary">
-            {product.price} DZD
+            {product.price} €
           </p>
           <p className="text-sm text-gray-500">Stock: {product.stock} pieces</p>
 
@@ -224,7 +226,7 @@ const ProductDetailsPage: React.FC = () => {
                   checked={deliveryOption === "home"}
                   onChange={() => setDeliveryOption("home")}
                 />
-                <span>Home (1000 DZD)</span>
+                <span>Home (10 €)</span>
               </label>
             </div>
           </div>
@@ -251,7 +253,7 @@ const ProductDetailsPage: React.FC = () => {
           <div className="border-t pt-4 mt-4">
             <div className="flex justify-between items-center text-lg font-semibold">
               <span>Total:</span>
-              <span>{totalAmount.toFixed(2)} DZD</span>
+              <span>{totalAmount.toFixed(2)} €</span>
             </div>
           </div>
 

@@ -142,7 +142,7 @@ export default function DesktopNavbar({
 
       {/* Crafts menu */}
       <div className="flex w-full justify-center mt-4 ">
-        <ul className="flex gap-6 text-lg font-inter font-medium text-gray-700 w-3/4 justify-center">
+        <ul className="flex gap-6 text-lg font-canela font-medium text-gray-700 w-3/4 justify-center">
           {craftItems.map((item, idx) => (
             <li
               key={item.label}

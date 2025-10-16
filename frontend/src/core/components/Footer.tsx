@@ -1,14 +1,22 @@
+import Features from "./feature";
+
 export default function Footer() {
   const titleClasses =
-    "text-[#1a1a1a] uppercase tracking-[0.2em] text-xs sm:text-sm font-semibold opacity-70 transition-opacity duration-300 hover:opacity-100";
+    "text-[#1a1a1a] uppercase tracking-[0.2em] text-xs sm:text-sm font-canela font-semibold opacity-70 transition-opacity duration-300 hover:opacity-100";
 
   return (
     <footer className="bg-[#eaeaea] text-[#1a1a1a] px-6 py-12">
-      <div className="max-w-6xl mx-auto flex flex-col gap-12">
+      <div className=" w-3/4 mx-auto ">
+        <Features />
+      </div>
+
+      <div className="mt-20 max-w-6xl mx-auto flex flex-col gap-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div className="space-y-3">
             <h3 className={titleClasses}>Aicha</h3>
-            <p className="text-lg font-semibold tracking-wide">CRAFTING CULTURE</p>
+            <p className="text-lg font-canela font-semibold tracking-wide">
+              CRAFTING CULTURE
+            </p>
             <p className="text-sm leading-relaxed">
               Timeless craftsmanship. Curated heritage.
               <br />
