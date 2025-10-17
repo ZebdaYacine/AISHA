@@ -6,6 +6,7 @@ import LoginPage from "./feature/LoginPage";
 import HomePage from "./feature/HomePage";
 import Navbar from "./core/components/navbar/Navbar";
 import ProfilePage from "./feature/profile/view/pages/ProfilePage";
+import ProofOfCraftsmanshipPage from "./feature/profile/view/pages/ProofOfCraftsmanshipPage";
 import StorePage from "./feature/store/view/pages/StorePage";
 import ProductDetailsPage from "./feature/store/view/pages/ProductDetailsPage";
 import CartPage from "./feature/store/view/pages/CartPage"; // Import CartPage
@@ -14,6 +15,7 @@ import { ProfileProvider } from "./core/state/profileContext";
 import { CraftsProvider } from "./core/state/craftsContext";
 import ThemeToggle from "./core/components/ThemeToggle";
 import UnderDevelopment from "./core/components/UnderDevelopment";
+import MissionPage from "./feature/mission/MissionPage";
 
 export default function App() {
   return (
@@ -31,6 +33,10 @@ export default function App() {
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route
+                  path="/proof-of-craftsmanship"
+                  element={<ProofOfCraftsmanshipPage />}
+                />
                 <Route path="/my-store" element={<StorePage />} />
                 <Route path="/product/:id" element={<ProductDetailsPage />} />
                 <Route path="/cart" element={<CartPage />} />
@@ -40,7 +46,7 @@ export default function App() {
                 <Route path="/category" element={<UnderDevelopment />} />
                 <Route path="/custom" element={<UnderDevelopment />} />
                 <Route path="/collections" element={<UnderDevelopment />} />
-                <Route path="/mission" element={<UnderDevelopment />} />
+                <Route path="/mission/*" element={<MissionPage />} />
               </Routes>
               <div className="divider divide-x-2"></div>
               <Footer />

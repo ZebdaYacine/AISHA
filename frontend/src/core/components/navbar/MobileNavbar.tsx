@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiUser, FiHome, FiLogOut, FiList } from "react-icons/fi";
+import { FiUser, FiHome, FiLogOut, FiList, FiUpload } from "react-icons/fi";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { ShoppingBasket } from "lucide-react";
 import { CiSearch } from "react-icons/ci";
@@ -207,6 +207,20 @@ export default function MobileNavbar({
                   My Orders
                 </button>
               </li>
+              {!isCraftsmanApproved && (
+                <li>
+                  <button
+                    className="btn btn-ghost justify-start"
+                    onClick={() => {
+                      navigate("/proof-of-craftsmanship");
+                      closeDrawer();
+                    }}
+                  >
+                    <FiUpload className="w-6 h-6 mr-2" />
+                    Join to Us
+                  </button>
+                </li>
+              )}
             </>
           )}
           <li>

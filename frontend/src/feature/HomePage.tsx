@@ -39,6 +39,7 @@ export default function HomePage() {
             const productsList = Object.keys(data).map((key) => ({
               id: key,
               ...data[key],
+              dimension: data[key].dimension ?? "",
               image: `${data[key].image}`,
             }));
             setProducts(productsList);
@@ -129,6 +130,7 @@ export default function HomePage() {
                 image={`${product.image}`}
                 title={product.title}
                 description={product.description}
+                dimension={product.dimension}
                 price={product.price}
                 stock={product.stock}
                 onMore={() => handleToggleMore(product.id)}
@@ -187,6 +189,7 @@ export default function HomePage() {
                 image={`${product.image}`}
                 title={product.title}
                 description={product.description}
+                dimension={product.dimension}
                 price={product.price}
                 stock={product.stock}
                 onMore={() => handleToggleMore(product.id)}
@@ -219,6 +222,7 @@ export default function HomePage() {
                 image={`${product.image}`}
                 title={product.title}
                 description={product.description}
+                dimension={product.dimension}
                 price={product.price}
                 stock={product.stock}
                 onMore={() => handleToggleMore(product.id)}

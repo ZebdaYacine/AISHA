@@ -9,6 +9,7 @@ interface ProductCardProps {
   image: string;
   title: string;
   description: string;
+  dimension?: string;
   price: number;
   stock: number;
   isFavorite?: boolean;
@@ -26,6 +27,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(
     image,
     title,
     description,
+    dimension = "",
     price,
     stock,
     onBuy,
@@ -123,6 +125,9 @@ const ProductCard: React.FC<ProductCardProps> = memo(
               <p className="text-gray-500 line-clamp-2">
                 {description.slice(0, 100)} .....
               </p>
+            )}
+            {dimension && (
+              <p className="text-sm text-gray-400">Dimensions: {dimension}</p>
             )}
 
             {/* Get more button */}

@@ -2,16 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import swal from "sweetalert";
 import UserInformationComponent from "../components/UserInformationComponent";
-import ProofOfCraftsComponent from "../components/ProofOfCraftsComponent";
 
 import { useProfileViewModel } from "../../viewmodel/ProfileViewModel";
-import CustomAlert from "../components/CustomAlert";
-import { useCraftsContext } from "../../../../core/hooks/useProfile";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const vm = useProfileViewModel();
-  const { craftsmanInfo } = useCraftsContext();
 
   useEffect(() => {
     if (!vm.loading && !vm.isLoggedIn) {
@@ -89,27 +85,6 @@ export default function ProfilePage() {
           {/* User Info */}
           <UserInformationComponent />
           {/* <ProofOfCraftsComponent /> */}
-
-          {/* Craftsman Section */}
-          {!craftsmanInfo?.status ? (
-            <ProofOfCraftsComponent />
-          ) : craftsmanInfo?.status === "pending" ||
-            craftsmanInfo?.status === undefined ? (
-            <CustomAlert
-              type="pending"
-              message="⏳ Your request to become a craftsman is pending."
-            />
-          ) : craftsmanInfo?.status === "accepted" ? (
-            <CustomAlert
-              type="accepted"
-              message="🎉 Your request has been accepted! Welcome aboard."
-            />
-          ) : craftsmanInfo?.status === "rejected" ? (
-            <CustomAlert
-              type="rejected"
-              message="❌ Sorry, your request was rejected."
-            />
-          ) : null}
 
           {/* Actions */}
           <div className="pt-8 flex justify-center gap-4">

@@ -9,6 +9,7 @@ export interface Product {
   id: string;
   title: string;
   description: string;
+  dimension?: string;
   image: string;
   userId: string;
   price: number;
@@ -29,6 +30,7 @@ class StoreViewModel {
             const products = Object.keys(data).map((key) => ({
               id: key,
               ...data[key],
+              dimension: data[key].dimension ?? "",
               image: `${data[key].image}`,
             }));
             resolve(products);
@@ -44,6 +46,7 @@ class StoreViewModel {
     product: {
       title: string;
       description: string;
+      dimension: string;
       image: File;
       price: number;
       stock: number;
@@ -77,6 +80,7 @@ class StoreViewModel {
     const newProductData = {
       title: product.title,
       description: product.description,
+      dimension: product.dimension,
       image: uploadedImagePath,
       userId,
       price: product.price,
@@ -93,6 +97,7 @@ class StoreViewModel {
     updates: {
       title: string;
       description: string;
+      dimension: string;
       price: number;
       stock: number;
     },
@@ -159,6 +164,7 @@ class StoreViewModel {
             resolve({
               id: snapshot.key!,
               ...data,
+              dimension: data.dimension ?? "",
               image: `${data.image}`,
             } as Product);
           } else {

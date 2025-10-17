@@ -80,6 +80,7 @@ const StorePage: React.FC = () => {
               image={`${product.image}`}
               title={product.title}
               description={product.description}
+              dimension={product.dimension}
               price={product.price}
               stock={product.stock}
               onMore={() => handleToggleMore(product.id)}

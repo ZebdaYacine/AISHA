@@ -24,6 +24,7 @@ const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = ({
 }) => {
   const [productTitle, setProductTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [dimension, setDimension] = useState("");
   const [price, setPrice] = useState<number | "">("");
   const [stock, setStock] = useState<number | "">("");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -35,6 +36,7 @@ const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = ({
     if (product) {
       setProductTitle(product.title);
       setDescription(product.description);
+      setDimension(product.dimension ?? "");
       setPrice(product.price);
       setStock(product.stock);
     }
@@ -69,6 +71,7 @@ const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = ({
         {
           title: productTitle,
           description,
+          dimension,
           price: price,
           stock: stock,
         },
@@ -143,6 +146,21 @@ const ModalUpdateProduct: React.FC<ModalUpdateProductProps> = ({
                 placeholder="Write a short product description..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+              />
+              <label className="label">
+                <span className="label-text-alt">Optional</span>
+              </label>
+            </div>
+
+            {/* Dimension */}
+            <div className="form-control">
+              <label className="label font-medium">Dimensions</label>
+              <input
+                type="text"
+                placeholder='e.g. "20cm x 15cm x 10cm"'
+                className="input input-bordered w-full"
+                value={dimension}
+                onChange={(e) => setDimension(e.target.value)}
               />
               <label className="label">
                 <span className="label-text-alt">Optional</span>

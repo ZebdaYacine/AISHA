@@ -12,7 +12,11 @@ interface FloatingImageProps {
     | "top-center-left"
     | "bottom-center-right"
     | "top-far-left"
-    | "bottom-far-right";
+    | "bottom-far-right"
+    | "top-center-right"
+    | "bottom-center-left"
+    | "center-left"
+    | "center-right";
   animationDelay?: string;
 }
 
@@ -42,6 +46,12 @@ export default function FloatingImage({
       "absolute bottom-1/3 right-1/4 transform translate-y-1/2 translate-x-1/2",
     "top-far-left": "absolute top-1/4 left-48",
     "bottom-far-right": "absolute bottom-1/4 right-48",
+    "top-center-right":
+      "absolute top-1/3 right-1/4 transform -translate-y-1/2 translate-x-1/2",
+    "bottom-center-left":
+      "absolute bottom-1/3 left-1/4 transform translate-y-1/2 -translate-x-1/2",
+    "center-left": "absolute top-1/2 left-10 transform -translate-y-1/2",
+    "center-right": "absolute top-1/2 right-10 transform -translate-y-1/2",
   };
 
   return (

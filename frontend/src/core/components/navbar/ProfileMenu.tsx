@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { FiUser, FiLogOut, FiList } from "react-icons/fi";
+import { FiUser, FiLogOut, FiList, FiUpload } from "react-icons/fi";
 
 interface ProfileMenuProps {
   userPhoto?: string | null;
   onProfile: () => void;
   onCart: () => void;
   onOrders: () => void;
+  onJoin?: () => void;
   onLogout?: () => void | Promise<void>;
   size?: "md" | "lg";
   align?: "left" | "right" | "center";
@@ -16,6 +17,7 @@ const ProfileMenu = ({
   userPhoto,
   onProfile,
   onOrders,
+  onJoin,
   onLogout,
   size = "lg",
   className = "",
@@ -93,6 +95,13 @@ const ProfileMenu = ({
                 <FiUser className="w-4 h-4" /> Profile
               </button>
             </li>
+            {onJoin && (
+              <li>
+                <button onClick={() => handleAction(onJoin)}>
+                  <FiUpload className="w-4 h-4" /> Join to Us
+                </button>
+              </li>
+            )}
             {/* <li>
               <button onClick={() => handleAction(onCart)}>
                 <HiOutlineShoppingCart className="w-4 h-4" /> Cart

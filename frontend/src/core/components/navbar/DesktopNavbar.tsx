@@ -44,6 +44,8 @@ export default function DesktopNavbar({
     typeof craftsmanInfo?.status === "string" &&
     ["accepted", "approved"].includes(craftsmanInfo.status.toLowerCase());
 
+  const canJoinCraftsman = isLoggedIn && !isCraftsmanApproved;
+
   const handleLogout = async () => {
     const { error } = await signOutUser();
     if (error) {
@@ -82,6 +84,11 @@ export default function DesktopNavbar({
         onProfile={() => navigate("/profile")}
         onCart={() => navigate("/cart")}
         onOrders={() => navigate("/orders")}
+        onJoin={
+          canJoinCraftsman
+            ? () => navigate("/proof-of-craftsmanship")
+            : undefined
+        }
         onLogout={handleLogout}
         size="lg"
         align="center"
