@@ -52,7 +52,6 @@ export default function DesktopNavbar({
       console.error("Failed to log out:", error);
       return;
     }
-
     logout();
     setCraftsmanInfo(null);
     navigate("/");
@@ -146,7 +145,6 @@ export default function DesktopNavbar({
           </div>
         </div>
       </div>
-
       {/* Crafts menu */}
       <div className="flex w-full justify-center mt-4 ">
         <ul className="flex gap-6 text-lg font-canela font-medium text-gray-700 w-3/4 justify-center">

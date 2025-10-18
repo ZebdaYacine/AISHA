@@ -4,9 +4,15 @@ interface ImageZoomProps {
   src: string;
   alt: string;
   className?: string;
+  objectFit?: "cover" | "contain";
 }
 
-const ImageZoom: React.FC<ImageZoomProps> = ({ src, alt, className }) => {
+const ImageZoom: React.FC<ImageZoomProps> = ({
+  src,
+  alt,
+  className,
+  objectFit = "cover",
+}) => {
   const [zoom, setZoom] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const imageRef = useRef<HTMLDivElement>(null);
@@ -32,11 +38,12 @@ const ImageZoom: React.FC<ImageZoomProps> = ({ src, alt, className }) => {
       <img
         src={src}
         alt={alt}
-        className="w-full h-full object-cover transition-transform duration-300"
+        className="w-full h-full transition-transform duration-300"
         style={{
           transform: zoom ? "scale(2)" : "scale(1)",
           transformOrigin: `${position.x}% ${position.y}%`,
           cursor: zoom ? "zoom-out" : "zoom-in",
+          objectFit,
         }}
       />
     </div>

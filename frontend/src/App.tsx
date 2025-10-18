@@ -16,6 +16,7 @@ import { CraftsProvider } from "./core/state/craftsContext";
 import ThemeToggle from "./core/components/ThemeToggle";
 import UnderDevelopment from "./core/components/UnderDevelopment";
 import MissionPage from "./feature/mission/MissionPage";
+import ProductsCat from "./feature/shop/category/view/ProductsCat";
 
 export default function App() {
   return (
@@ -43,7 +44,18 @@ export default function App() {
                 <Route path="/orders" element={<MyOrdersPage />} />
                 <Route path="/new" element={<UnderDevelopment />} />
                 <Route path="/artisan" element={<UnderDevelopment />} />
-                <Route path="/category" element={<UnderDevelopment />} />
+                <Route
+                  path="/category/:id/:id/:id"
+                  element={<UnderDevelopment />}
+                />
+                <Route
+                  path="/category/:categorySlug"
+                  element={<ProductsCat />}
+                />
+                <Route
+                  path="/category/:categorySlug/:subcategorySlug"
+                  element={<ProductsCat />}
+                />
                 <Route path="/custom" element={<UnderDevelopment />} />
                 <Route path="/collections" element={<UnderDevelopment />} />
                 <Route path="/mission/*" element={<MissionPage />} />

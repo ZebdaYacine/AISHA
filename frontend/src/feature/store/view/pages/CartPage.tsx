@@ -278,11 +278,11 @@ const CartPage: React.FC = () => {
               />
               <div className="flex-grow">
                 <h3 className="text-lg font-semibold">{item.title}</h3>
-                <p className="text-gray-600">Price: {item.price} DZD</p>
+                <p className="text-gray-600">Price: {item.price} €</p>
                 <p className="text-gray-600">
                   Delivery:{" "}
                   {item.deliveryOption === "home"
-                    ? `Home (+${item.deliveryCost} DZD)`
+                    ? `Home (+${item.deliveryCost} €)`
                     : "Office (Free)"}
                 </p>
                 <div className="flex items-center space-x-2 mt-2">
@@ -307,7 +307,7 @@ const CartPage: React.FC = () => {
               </div>
               <div className="text-right">
                 <p className="text-xl font-bold">
-                  {item.totalItemAmount.toFixed(2)} DZD
+                  {item.totalItemAmount.toFixed(2)} €
                 </p>
                 <button
                   className="btn btn-error btn-sm mt-2"
@@ -368,7 +368,7 @@ const CartPage: React.FC = () => {
                   totalCartAmount -
                   cartItems.reduce((sum, item) => sum + item.deliveryCost, 0)
                 ).toFixed(2)}{" "}
-                DZD
+                €
               </span>
             </div>
             <div className="flex justify-between">
@@ -377,12 +377,12 @@ const CartPage: React.FC = () => {
                 {cartItems
                   .reduce((sum, item) => sum + item.deliveryCost, 0)
                   .toFixed(2)}{" "}
-                DZD
+                €
               </span>
             </div>
             <div className="border-t pt-4 mt-4 flex justify-between text-xl font-bold">
               <span>Total:</span>
-              <span>{totalCartAmount.toFixed(2)} DZD</span>
+              <span>{totalCartAmount.toFixed(2)} €</span>
             </div>
           </div>
           <button

@@ -1,24 +1,32 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import useSWR from "swr";
 import StoreViewModel from "../../viewmodel/StoreViewModel";
-import ImageZoom from "../../../../core/components/ImageZoom";
 import { AuthContext } from "../../../../core/state/AuthContext";
 import { db } from "../../../../core/firebase/config";
 import { ref, set, push, serverTimestamp } from "firebase/database";
 import Swal from "sweetalert2";
+import { getStaticProductById } from "../../../shop/category/data/staticCategoryProducts";
+import ProductGallery from "../components/ProductGallery";
 
 const MySwal = Swal;
 
 const ProductDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const {
-    data: product,
+    data: remoteProduct,
     error,
     isLoading,
   } = useSWR(id ? `product/${id}` : null, () =>
     id ? StoreViewModel.fetchProductById(id) : null
   );
+
+  const staticProduct = useMemo(
+    () => (id ? getStaticProductById(id) : undefined),
+    [id]
+  );
+
+  const product = remoteProduct ?? staticProduct ?? null;
   const { user, isLoggedIn } = useContext(AuthContext)!;
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,8 +35,29 @@ const ProductDetailsPage: React.FC = () => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isBuyingNow, setIsBuyingNow] = useState(false);
 
+  const galleryImages = useMemo(() => {
+    if (!product) {
+      return [];
+    }
+
+    const maybeGallery = (product as { gallery?: unknown }).gallery;
+    if (Array.isArray(maybeGallery) && maybeGallery.length > 0) {
+      return maybeGallery.filter(
+        (src): src is string => typeof src === "string" && src.length > 0
+      );
+    }
+
+    if (typeof product.image === "string" && product.image.length > 0) {
+      return [product.image];
+    }
+
+    return [];
+  }, [product]);
+
   const deliveryCost = deliveryOption === "home" ? 1000 : 0;
   const totalAmount = product ? product.price * quantity + deliveryCost : 0;
+  const showLoading = isLoading && !staticProduct;
+  const showError = error && !staticProduct;
 
   const redirectToLogin = async (message: string) => {
     await MySwal.fire({
@@ -170,7 +199,7 @@ const ProductDetailsPage: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  if (showLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <span className="loading loading-spinner loading-lg"></span>
@@ -178,7 +207,7 @@ const ProductDetailsPage: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (showError) {
     return (
       <div className="text-center text-red-500 mt-32">
         Failed to load product details.
@@ -288,12 +317,8 @@ const ProductDetailsPage: React.FC = () => {
             </button>
           </div>
         </div>
-        {/* Product Image */}
-        <ImageZoom
-          src={`${product.image}`}
-          alt={product.title}
-          className="w-full h-auto object-cover rounded-lg shadow-lg"
-        />
+        {/* Product Gallery */}
+        <ProductGallery images={galleryImages} title={product.title} />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { db } from "../core/firebase/config";
 import { ref, onValue } from "firebase/database";
 // import SlideSection from "../core/components/SlideSection";
@@ -21,6 +21,7 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   const handleToggleMore = (id: string) => {
     setExpandedProducts((prev) =>
@@ -79,6 +80,36 @@ export default function HomePage() {
     currentPage * ITEMS_PER_PAGE
   );
 
+  useEffect(() => {
+    const videoEl = heroVideoRef.current;
+    if (!videoEl) {
+      return;
+    }
+
+    const handleScroll = () => {
+      const maxScroll = Math.max(window.innerHeight * 0.8, 1);
+      const scrollTop = window.scrollY;
+      const rawVolume = 1 - scrollTop / maxScroll;
+      const clampedVolume = Math.max(0, Math.min(1, rawVolume));
+
+      videoEl.volume = clampedVolume;
+      videoEl.muted = clampedVolume <= 0.05;
+    };
+
+    // Initialize volume when component mounts
+    videoEl.muted = false;
+    videoEl.volume = 1;
+    videoEl.play().catch(() => {
+      /* Autoplay with audio can be blocked until user interaction */
+    });
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       {user ? (
@@ -91,11 +122,11 @@ export default function HomePage() {
           <div className=" sm:mt-28 mt-28 flex  flex-col flex-1 justify-center items-center w-full h-screen">
             <div className="h-1/3 w-full">
               <video
+                ref={heroVideoRef}
                 className="w-full h-full object-cover"
                 autoPlay
                 loop
                 playsInline
-                muted
               >
                 <source src="/dist/aisha/aicha.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
