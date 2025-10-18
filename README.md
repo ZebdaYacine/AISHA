@@ -32,6 +32,17 @@ This repository contains the code for **Aicha**, a curated marketplace that high
 
 ---
 
+## Technology Stack
+| Layer        | Technologies |
+|--------------|--------------|
+| UI / Client  | ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?logo=tailwindcss&logoColor=white) ![DaisyUI](https://img.shields.io/badge/DaisyUI-5A0EF8?logo=daisyui&logoColor=white) |
+| State & Data | ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?logo=firebase&logoColor=black) ![SWR](https://img.shields.io/badge/SWR-000000?logo=swr&logoColor=white) |
+| Server / API | ![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white) ![Fiber](https://img.shields.io/badge/Fiber-00ADD8?logo=fiber&logoColor=white) ![Ent](https://img.shields.io/badge/Ent-000000?logo=graphql&logoColor=white) |
+| Infrastructure | ![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white) ![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white) ![Google Cloud OAuth](https://img.shields.io/badge/Google%20OAuth-4285F4?logo=google&logoColor=white) |
+| Tooling      | ![Node.js](https://img.shields.io/badge/Node.js-43853D?logo=node.js&logoColor=white) ![npm](https://img.shields.io/badge/npm-CB3837?logo=npm&logoColor=white) ![ESLint](https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=white) |
+
+---
+
 ## Repository Layout
 ```
 aisha/
@@ -151,6 +162,31 @@ The server listens on the address returned by `cfg.ListenAddr()` (defaults to `0
 
 ---
 
+## Docker Support
+Lightweight Dockerfiles ship with the repo so you can containerize the frontend and backend quickly.
+
+### Build & Run (Frontend)
+```bash
+cd frontend
+docker build -t aicha-frontend .
+docker run --rm -it -p 4173:4173 aicha-frontend
+# serves the built site with `serve` on http://localhost:4173
+```
+
+### Build & Run (Backend)
+```bash
+cd backend
+docker build -t aicha-backend .
+docker run --rm -it \
+  --env-file .env \
+  -p 8080:8080 \
+  aicha-backend
+```
+
+> Ensure the container can reach MySQL, Redis, and Google OAuth endpoints specified in `.env`. For local development you may bind those services into the same Docker network or point the DSN at your host.
+
+---
+
 ## Development Tips
 - **Auth Context:** Wrap authenticated components with `AuthProvider` (already done in `frontend/src/App.tsx`). Use `useAuth()` and `useProfileContext()` hooks for reactive user data.
 - **Product Gallery:** Provide a `gallery` array when creating new products so the slideshow renders multiple images out-of-the-box.
@@ -185,4 +221,3 @@ The server listens on the address returned by `cfg.ListenAddr()` (defaults to `0
 No explicit license is provided. Treat the contents as proprietary unless the project maintainers state otherwise.
 
 For questions or contributions, open an issue or reach out directly to the maintainers.
-
