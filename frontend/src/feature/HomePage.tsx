@@ -19,7 +19,7 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -144,65 +144,6 @@ export default function HomePage() {
       )}
 
       <FilterTabs />
-
-      {/* <div className="mt-20 w-3/4 mx-auto ">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <span className="loading loading-spinner loading-lg"></span>
-          </div>
-        ) : error ? (
-          <div className="text-center text-red-500">{error}</div>
-        ) : (
-          <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {paginatedProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                image={`${product.image}`}
-                title={product.title}
-                description={product.description}
-                dimension={product.dimension}
-                price={product.price}
-                stock={product.stock}
-                onMore={() => handleToggleMore(product.id)}
-                toggelMore={expandedProducts.includes(product.id)}
-                onBuy={() => console.log(`Buy ${product.title}`)}
-                isClient={true}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="flex justify-center mt-8 gap-2 flex-wrap">
-          <button
-            className="btn btn-sm"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              className={`btn btn-sm ${
-                currentPage === i + 1 ? "btn-primary" : ""
-              }`}
-              onClick={() => setCurrentPage(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
-
-          <button
-            className="btn btn-sm"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
-      </div> */}
 
       <div className="mt-20 w-3/4 mx-auto ">
         {isLoading ? (
